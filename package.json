@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "dev": "ng serve",
-    "build": "ng build --configuration production",
+    "build": "ng build --configuration production --base-href 'https://lorenmucha.github.io/TestCaseRegioKontext/'",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
