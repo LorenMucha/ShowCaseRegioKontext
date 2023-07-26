@@ -1,10 +1,19 @@
 <header>
-  <div class="title">Map Viewer - Openlayers & Angular</div>
+  <div class="container text-4xl text-center py-10">Regio Context - Text Case</div>
 </header>
 <main>
-  <div class="left-bar"></div>
-  <div id="ol-map" class="map-container"></div>
+  <div class="w-full px-10 max-h-fit">
+    <mat-tab-group>
+      <mat-tab label="First"> Content 1 </mat-tab>
+      <mat-tab label="Second"> Content 2 </mat-tab>
+      <mat-tab label="Third"> Content 3 </mat-tab>
+    </mat-tab-group>
+  </div>
+  <div class="h-full flex-grow-1 border-4 border-red-100 m-5">
+    <div id="ol-map" class="h-full"></div>
+  </div>
 </main>
-<footer>
-  Footer
+<footer class="align-baseline">
+  <a class="font-medium text-blue-600 dark:text-blue-500 hover:underline float-right"
+    href="https://lorenmucha.de" target="_blank">@Loren Mucha</a>
 </footer>

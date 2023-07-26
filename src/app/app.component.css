@@ -1,33 +1,14 @@
 :host {
+    height: 100%;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+main{
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    flex: 1;
 }
-
-header {
-    background-color: var(--header-color);
-    padding: 2em;
-}
-
-header .title {
-    font-size: 28px;
-}
-
-main {
-    display: flex;
-    flex-grow: 1;
-}
-
-.left-bar {
-    width: 20em;
-    background-color: var(--sidebar-color);
-}
-
-.map-container {
-    flex-grow: 1;
-}
-
-footer {
-    background-color: var(--header-color);
-    padding: 1em;
-}
+.openlayers-map {
+    height: 100% !important;
+  }
