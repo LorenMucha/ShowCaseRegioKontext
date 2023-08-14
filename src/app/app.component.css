@@ -9,6 +9,4 @@ main{
     flex-direction: column;
     flex: 1;
 }
-.openlayers-map {
-    height: 100% !important;
-  }
+
