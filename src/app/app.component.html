@@ -3,10 +3,10 @@
 </header>
 <main class="m-5">
   <div class="inline-flex" role="group">
-    <button class="btn w-full" *ngFor="let map of maps" (click)="changeMap(map)"
-      [ngClass]="{'btn-active': map.active, 'btn': !map.active}">{{map.name}}</button>
+    <button class="btn w-full border border-green-900" *ngFor="let map of maps" (click)="changeMap(map)"
+      [ngClass]="{'btn-active': map.active, 'btn': !map.active}" type="button">{{map.name}}</button>
   </div>
-  <div class="h-full flex-grow-1 mt-5">
+  <div class="h-full flex-grow-1 map-container">
     <app-map [layerName]="selectedMap"></app-map>
   </div>
 </main>
