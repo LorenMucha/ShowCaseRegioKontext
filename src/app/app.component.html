@@ -1,13 +1,8 @@
-<header>
-  <div class="container text-4xl text-center py-10">Regio Context - Text Case</div>
-</header>
+<header></header>
 <main class="m-5">
-  <div class="inline-flex" role="group">
-    <button class="btn w-full border border-green-900" *ngFor="let map of maps" (click)="changeMap(map)"
-      [ngClass]="{'btn-active': map.active, 'btn': !map.active}" type="button">{{map.name}}</button>
-  </div>
+  <app-taps [mapLayers]="layers" (layerChangeEvent)="changeLayer($event)"></app-taps>
   <div class="h-full flex-grow-1 map-container">
-    <app-map [layerName]="selectedMap"></app-map>
+    <app-map [layer]="selectedLayer"></app-map>
   </div>
 </main>
 <footer class="align-baseline p-5">

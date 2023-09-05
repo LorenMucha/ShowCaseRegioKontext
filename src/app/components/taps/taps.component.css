@@ -1,0 +1,7 @@
+.btn {
+    @apply bg-white p-2 max-h-14 h-fit
+}
+
+.btn-active {
+    @apply text-2xl h-14
+}

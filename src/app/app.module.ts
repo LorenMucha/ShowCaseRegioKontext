@@ -6,11 +6,13 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MapComponent } from './components/map/map.component';
+import { TapsComponent } from './components/taps/taps.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MapComponent
+    MapComponent,
+    TapsComponent,
   ],
   imports: [
     BrowserModule,

@@ -15,11 +15,3 @@ main .map-container {
     @apply border-green-700 border border-solid;
 
 }
-
-main .btn {
-    @apply bg-white p-2
-}
-
-main .btn-active {
-    @apply text-2xl
-}
