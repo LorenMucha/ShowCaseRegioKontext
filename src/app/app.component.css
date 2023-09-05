@@ -4,9 +4,17 @@
     width: 100%;
     flex-direction: column;
 }
-main{
+
+main {
     display: flex;
     flex-direction: column;
     flex: 1;
+    @apply bg-gray-400;
 }
 
+.btn{
+    @apply bg-white
+}
+.btn-active{
+    @apply bg-gray-400
+}

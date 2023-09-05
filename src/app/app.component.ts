@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material/tabs';
 import { MapLayers } from './components/map/map.component';
 
 @Component({
@@ -10,8 +9,26 @@ import { MapLayers } from './components/map/map.component';
 export class AppComponent {
   layers = MapLayers
   selectedMap: string = "osm";
+  maps: Array<any> = [{
+    id: "osm",
+    name: "OSM",
+    active: true
+  },
+  {
+    id: "satellite",
+    name: "Satellite",
+    active: false
+  },
+  {
+    id: "watercolor",
+    name: "Watercolor",
+    active: false
+  }
+  ];
   objectKeys = Object.keys;
-  onTabChange($event: MatTabChangeEvent) {
-    this.selectedMap = $event.tab.textLabel.toLowerCase()
+  changeMap(map: any) {
+    this.selectedMap = map.id
+    this.maps.forEach((map) => { map.active = false })
+    map.active = !map.active
   }
 }

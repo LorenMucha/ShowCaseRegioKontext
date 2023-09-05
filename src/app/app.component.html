@@ -2,14 +2,11 @@
   <div class="container text-4xl text-center py-10">Regio Context - Text Case</div>
 </header>
 <main class="m-5">
-  <div class="w-full px-10 max-h-fit">
-    <mat-tab-group dynamicHeight (selectedTabChange)="onTabChange($event)">
-      <mat-tab label="OSM" selected/>
-      <mat-tab label="Satellite" />
-      <mat-tab label="Watercolor" />
-    </mat-tab-group>
+  <div class="inline-flex" role="group">
+    <button class="btn w-full" *ngFor="let map of maps" (click)="changeMap(map)"
+      [ngClass]="{'btn-active': map.active, 'btn': !map.active}">{{map.name}}</button>
   </div>
-  <div class="h-full flex-grow-1">
+  <div class="h-full flex-grow-1 mt-5">
     <app-map [layerName]="selectedMap"></app-map>
   </div>
 </main>
