@@ -4,9 +4,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatTabsModule } from '@angular/material/tabs';
 import { MapComponent } from './components/map/map.component';
-import { TapsComponent } from './components/taps/taps.component';
+import { TapsComponent } from './components/ui/taps/taps.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import {MatSliderModule} from '@angular/material/slider';
+
+
 
 @NgModule({
   declarations: [
@@ -18,7 +21,8 @@ import { TapsComponent } from './components/taps/taps.component';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatTabsModule
+    MatSlideToggleModule,
+    MatSliderModule
   ],
   providers: [],
   bootstrap: [AppComponent]

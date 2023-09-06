@@ -10,10 +10,10 @@ import Stamen from 'ol/source/Stamen';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent{
+export class AppComponent {
   layers: Array<MapLayer> = [{
     id: "osm",
-    name: "OSM",
+    name: "Wohnungsnachfrage",
     active: true,
     layer: new TileLayer({
       source: new OSM(),
@@ -21,7 +21,7 @@ export class AppComponent{
   },
   {
     id: "satellite",
-    name: "Satellite",
+    name: "Wohnungsangebot",
     active: false,
     layer: new TileLayer({
       source: new XYZ({
@@ -35,7 +35,7 @@ export class AppComponent{
   },
   {
     id: "watercolor",
-    name: "Watercolor",
+    name: "Marktdaten",
     active: false,
     layer: new TileLayer({
       source: new Stamen({
@@ -44,9 +44,12 @@ export class AppComponent{
     }),
   }
   ];
+  color="ascent";
   selectedLayer: TileLayer<any> = this.layers[0].layer;
 
   objectKeys = Object.keys;
+  checked: any;
+  disabled: any;
   changeLayer(layer: MapLayer) {
     this.selectedLayer = layer.layer
   }

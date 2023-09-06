@@ -1,3 +1,4 @@
-.openlayers-map {
-    height: 100% !important;
+#ol-map {
+    height: 50vh;
+    @apply w-full;
 }
