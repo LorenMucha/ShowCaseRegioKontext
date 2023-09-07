@@ -3,7 +3,7 @@
 }
 
 main {
-    @apply m-5 h-max;
+    @apply px-5 pt-5;
 }
 
 main .map-container {

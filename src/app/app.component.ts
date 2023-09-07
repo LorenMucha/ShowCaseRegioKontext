@@ -4,6 +4,7 @@ import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import XYZ from 'ol/source/XYZ';
 import Stamen from 'ol/source/Stamen';
+import { Gemeinde } from './model/gemeinde';
 
 @Component({
   selector: 'app-root',
@@ -44,7 +45,12 @@ export class AppComponent {
     }),
   }
   ];
-  color="ascent";
+  tableSource: Array<Gemeinde> = [
+    { name: "Berlin", value: 500 },
+    { name: "Potsdam", value: 300 }
+  ]
+  displayedColumns: string[] = ['name', 'value'];
+  color = "ascent";
   selectedLayer: TileLayer<any> = this.layers[0].layer;
 
   objectKeys = Object.keys;

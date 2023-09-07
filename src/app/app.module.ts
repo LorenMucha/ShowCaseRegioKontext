@@ -7,7 +7,19 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MapComponent } from './components/map/map.component';
 import { TapsComponent } from './components/ui/taps/taps.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import {MatSliderModule} from '@angular/material/slider';
+import { MatSliderModule } from '@angular/material/slider';
+import {
+  FormControl,
+  FormGroupDirective,
+  NgForm,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
 
 
 
@@ -22,7 +34,8 @@ import {MatSliderModule} from '@angular/material/slider';
     AppRoutingModule,
     BrowserAnimationsModule,
     MatSlideToggleModule,
-    MatSliderModule
+    MatSliderModule,
+    FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatTableModule, MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]
