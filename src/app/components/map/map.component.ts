@@ -4,6 +4,7 @@ import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile';
 import { fromLonLat } from 'ol/proj.js'
 
+
 const berlinLonLat = [13.404954, 52.520008];
 const mapCenter = fromLonLat(berlinLonLat);
 

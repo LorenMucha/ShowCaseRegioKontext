@@ -20,6 +20,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
+import { InitService } from './services/init.service';
 
 
 
@@ -37,7 +38,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatSliderModule,
     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatTableModule, MatIconModule
   ],
-  providers: [],
+  providers: [InitService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,4 +1,4 @@
 <div class="inline-flex items-end w-full" role="group">
-    <button class="btn w-full border border-green-900" *ngFor="let map of mapLayers" (click)="changeMap(map)"
-        [ngClass]="{'btn-active': map.active, 'btn': !map.active}" type="button">{{map.name}}</button>
+    <button class="btn w-full border border-green-900" *ngFor="let tab of tabList" (click)="changeTab(tab)"
+        [ngClass]="{'btn-active': tab.active, 'btn': !tab.active}" type="button">{{tab.title}}</button>
 </div>

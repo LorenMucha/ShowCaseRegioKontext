@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MapLayer } from 'src/app/model/map-layer';
+import { TabElem } from 'src/app/model/tabs-elem';
 
 @Component({
   selector: 'app-taps',
@@ -7,15 +7,13 @@ import { MapLayer } from 'src/app/model/map-layer';
   styleUrls: ['./taps.component.css']
 })
 export class TapsComponent {
-  @Input({ required: true }) mapLayers: Array<MapLayer> = []
-  private selectedLayer: MapLayer | undefined
-  @Output() layerChangeEvent = new EventEmitter<MapLayer>();
-
-  changeMap(mapLayer: MapLayer) {
-    this.selectedLayer = mapLayer
-    this.mapLayers.forEach((map) => { map.active = false })
-    this.selectedLayer.active = !this.selectedLayer.active
-    console.log(this.selectedLayer)
-    this.layerChangeEvent.emit(this.selectedLayer);
+  @Input({ required: true }) tabList: Array<TabElem> = []
+  private selectedTab: TabElem | undefined
+  @Output() tabChangeEvent = new EventEmitter<TabElem>();
+  changeTab(tab: TabElem) {
+    this.selectedTab = tab
+    this.tabList.forEach((tab) => { tab.active = false })
+    this.selectedTab.active = !this.selectedTab.active
+    this.tabChangeEvent.emit(this.selectedTab)
   }
 }
