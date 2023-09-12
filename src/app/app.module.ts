@@ -21,6 +21,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { InitService } from './services/init.service';
+import { MapService } from './services/map.service';
 
 
 
@@ -38,7 +39,10 @@ import { InitService } from './services/init.service';
     MatSliderModule,
     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatTableModule, MatIconModule
   ],
-  providers: [InitService],
+  providers: [InitService, MapService, {
+    provide: 'mapId',
+    useValue: 'ol-map'
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
