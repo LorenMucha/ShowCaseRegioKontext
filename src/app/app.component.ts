@@ -4,13 +4,16 @@ import TileLayer from 'ol/layer/Tile';
 import { Gemeinde } from './model/gemeinde';
 import { TabElem } from './model/tabs-elem';
 import { InitService } from './services/init.service';
+import { MapComponent } from './components/map/map.component';
+
+
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
   constructor(private initService: InitService) {}
 
@@ -41,12 +44,8 @@ export class AppComponent implements OnInit {
   objectKeys = Object.keys;
   checked: any;
   disabled: any;
-  ngOnInit(): void {
-    console.log(this.tabList)
-  }
   changeTab(tab: TabElem) {
     this.selectedTab = tab
-    console.log(tab)
   }
   changeLayer(layer: MapLayer) {
     this.selectedLayer = layer.layer

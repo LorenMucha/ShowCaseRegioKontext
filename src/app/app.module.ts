@@ -8,6 +8,7 @@ import { MapComponent } from './components/map/map.component';
 import { TapsComponent } from './components/ui/taps/taps.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import {
   FormControl,
   FormGroupDirective,
@@ -23,8 +24,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { InitService } from './services/init.service';
 import { MapService } from './services/map.service';
 
-
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,7 +36,7 @@ import { MapService } from './services/map.service';
     BrowserAnimationsModule,
     MatSlideToggleModule,
     MatSliderModule,
-    FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatTableModule, MatIconModule
+    FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatTableModule, MatIconModule, MatCheckboxModule
   ],
   providers: [InitService, MapService, {
     provide: 'mapId',

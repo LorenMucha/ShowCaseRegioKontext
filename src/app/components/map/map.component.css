@@ -1,7 +1,0 @@
-.map-frame{
-    height: 100%;
-}
-#ol-map {
-    height: 100%;
-    @apply w-full;
-}

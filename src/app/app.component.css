@@ -7,7 +7,8 @@ main {
 }
 
 main .map-container {
-    @apply h-max w-full;
+    height: max-content;
+    @apply w-full;
 }
 
 ::ng-deep .mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__shadow {

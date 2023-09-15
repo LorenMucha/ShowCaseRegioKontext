@@ -12,8 +12,7 @@ const mapCenter = fromLonLat(berlinLonLat)
 
 @Component({
   selector: 'app-map',
-  templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css'],
+  template: '<div class="h-full"><div div id="ol-map" class="h-full w-full"> </div>'
 })
 export class MapComponent implements OnInit, AfterViewInit {
   map: OlMap = new OlMap
@@ -27,7 +26,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   constructor(private mapService: MapService) { }
 
   ngOnInit(): void {
-    this.layers = [this.layer!,this.gemBerlin, this.gemBrb]
+    this.layers = [this.layer!, this.gemBerlin, this.gemBrb]
     this.map = new OlMap({
       view: new View({
         center: mapCenter,
@@ -46,7 +45,6 @@ export class MapComponent implements OnInit, AfterViewInit {
     }
     this.map.getLayers().insertAt(0, newLayer)
     this.currentLayer = newLayer
-    setTimeout(() => { this.map.updateSize() })
   }
 
   ngAfterViewInit(): void {
