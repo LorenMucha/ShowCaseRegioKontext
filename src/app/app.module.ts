@@ -10,10 +10,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {
-  FormControl,
-  FormGroupDirective,
-  NgForm,
-  Validators,
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
@@ -21,8 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
-import { InitService } from './services/init.service';
-import { MapService } from './services/map.service';
+import { MapLayerService } from './services/map.layer.service';
 import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
@@ -40,7 +35,7 @@ import { HttpClientModule } from '@angular/common/http';
     MatSliderModule,
     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatTableModule, MatIconModule, MatCheckboxModule
   ],
-  providers: [InitService, MapService, {
+  providers: [MapLayerService, {
     provide: 'mapId',
     useValue: 'ol-map'
   }],

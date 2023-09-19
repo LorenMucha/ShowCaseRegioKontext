@@ -4,8 +4,9 @@ import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
 import { fromLonLat } from 'ol/proj.js'
 import Select from 'ol/interaction/Select'
-import { MapService } from 'src/app/services/map.service'
 import VectorLayer from 'ol/layer/Vector'
+import OSM from 'ol/source/OSM';
+import { MapLayerService } from 'src/app/services/map.layer.service'
 
 
 const berlinLonLat = [13.404954, 52.520008]
@@ -17,25 +18,25 @@ const mapCenter = fromLonLat(berlinLonLat)
 })
 export class MapComponent implements OnInit, AfterViewInit {
   map: OlMap = new OlMap
-  gemBerlin!: VectorLayer<any>
-  layers: Array<any> | undefined
-  @Input({ required: true }) layer: TileLayer<any> | undefined
+  private baseMap: TileLayer<any> = new TileLayer({
+    source: new OSM(),
+  })
   private currentLayer: TileLayer<any> | undefined
 
-  constructor(private mapService: MapService) { }
+  constructor(private mapService: MapLayerService) { }
 
   ngOnInit(): void {
+
     this.map = new OlMap({
       view: new View({
         center: mapCenter,
         zoom: 10,
       }),
-      layers: [this.layer!],
+      layers: [this.baseMap],
       target: 'ol-map'
     })
-    //FIXME: simplify
-    this.mapService.addLayerBerlin(this.map)
-    this.mapService.addLayerBrB(this.map)
+
+    this.mapService.getMapLayers().subscribe((layer) => layer.forEach((x) => this.map.addLayer(x.layer)))
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -52,11 +53,11 @@ export class MapComponent implements OnInit, AfterViewInit {
     var selectSingleClick = new Select()
     this.map.addInteraction(selectSingleClick)
 
-    this.map.on('singleclick', (event) => {
-      this.gemBerlin!.on('prerender', (event) => {
-        var feature = selectSingleClick.getFeatures()
-        console.log(feature.item(0))
-      })
-    })
+    // this.map.on('singleclick', (event) => {
+    //   this.gemBrb!.on('prerender', (event) => {
+    //     var feature = selectSingleClick.getFeatures()
+    //     console.log(feature.item(0))
+    //   })
+    // })
   }
 }
