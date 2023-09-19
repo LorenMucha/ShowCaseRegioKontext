@@ -9,6 +9,7 @@ import { MapLayerService } from '../services/map.layer.service';
 export class MapLayerEffects {
     constructor(private actions$: Actions, private mapLayerService: MapLayerService) { }
 
+    //FIXME: https://github.com/FabianGosebrink/angular-ngrx-todo
     loadLayers$ = createEffect(() =>
         this.actions$.pipe(
             ofType(layerActions.loadAllMapLayer),
