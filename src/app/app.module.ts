@@ -19,12 +19,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MapLayerService } from './services/map.layer.service';
 import { HttpClientModule } from '@angular/common/http';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreModule } from '@ngrx/store';
-import { MapLayerEffects, layerReducer } from './store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-
-
 
 @NgModule({
   declarations: [
@@ -33,11 +27,6 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     TapsComponent,
   ],
   imports: [
-    StoreModule.forRoot(layerReducer),
-    // StoreDevtoolsModule.instrument({
-    //   maxAge: 5
-    // }),
-    EffectsModule.forRoot([MapLayerEffects]),
     HttpClientModule,
     BrowserModule,
     AppRoutingModule,

@@ -6,9 +6,7 @@ import { fromLonLat } from 'ol/proj.js'
 import Select from 'ol/interaction/Select'
 import VectorLayer from 'ol/layer/Vector'
 import OSM from 'ol/source/OSM';
-import { LayerState } from 'src/app/store'
-import { Store } from '@ngrx/store'
-import * as fromLayerStore from '../../store'
+import { MapLayerService } from 'src/app/services/map.layer.service'
 
 
 const berlinLonLat = [13.404954, 52.520008]
@@ -20,14 +18,12 @@ const mapCenter = fromLonLat(berlinLonLat)
 })
 export class MapComponent implements OnInit, AfterViewInit {
   map: OlMap = new OlMap
-  private gemBerlin: VectorLayer<any> | undefined
-  private gemBrb: VectorLayer<any> | undefined
   private baseMap: TileLayer<any> = new TileLayer({
     source: new OSM(),
   })
   private currentLayer: TileLayer<any> | undefined
 
-  constructor(private store: Store<LayerState>) { }
+  constructor(private mapService: MapLayerService) { }
 
   ngOnInit(): void {
 
@@ -40,8 +36,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       target: 'ol-map'
     })
 
-    this.store.dispatch(fromLayerStore.loadAllMapLayer())
-    //console.log(this.store.dispatch(fromLayerStore.loadSingleMapLayer({ payload: 1 })))
+    this.mapService.getMapLayers().subscribe((layer) => layer.forEach((x) => this.map.addLayer(x.layer)))
   }
 
   ngOnChanges(changes: SimpleChanges) {
