@@ -47,7 +47,7 @@ export class MapLayerService {
   //FIXME: in einen ngrx store umschreiben !
   private getLayerBerlin(): Observable<MapLayer> {
     if (this.layerBerlin === undefined) {
-      return this.httpClient.get('assets/geojson/bez_berlin_2023.json')
+      return this.httpClient.get('assets/geojson/ortsteile_berlin_2023.json')
         .pipe(
           map((layer) => {
             const vectorSource = new VectorSource({
@@ -64,7 +64,7 @@ export class MapLayerService {
                 })
               })
             })
-            this.layerBerlin = new MapLayer(1, vector, "Gemeinden Berlin")
+            this.layerBerlin = new MapLayer(1, vector, "Ortsteile Berlin")
             return this.layerBerlin
           }))
     } else {
