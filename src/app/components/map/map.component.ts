@@ -12,9 +12,10 @@ import { MapLayerService } from 'src/app/services/map.layer.service'
 const berlinLonLat = [13.404954, 52.520008]
 const mapCenter = fromLonLat(berlinLonLat)
 
+//FIXME: dynamic heigth for map
 @Component({
   selector: 'app-map',
-  template: '<div class="h-full"><div div id="ol-map" class="h-full w-full"> </div>'
+  template: '<div class="h-[65vh]"><div div id="ol-map" class="h-full w-full"> </div>'
 })
 export class MapComponent implements OnInit, AfterViewInit {
   map: OlMap = new OlMap

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MapLayerService } from './map.layer.service';
+import { MapLayerService } from './MapLayerService';
 
 describe('MapLayerService', () => {
   let service: MapLayerService;
@@ -13,4 +13,9 @@ describe('MapLayerService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  it('extract feature names from the maplayer'), () => {
+    var features = service.getFeatureNames()
+    expect(features).not.toBeNull
+  }
 });

@@ -17,14 +17,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
-import { MapLayerService } from './services/map.layer.service';
 import { HttpClientModule } from '@angular/common/http';
+import { TableComponent } from './components/table/table.component';
+import { MapLayerService } from './services/map.layer.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     MapComponent,
     TapsComponent,
+    TableComponent,
   ],
   imports: [
     HttpClientModule,

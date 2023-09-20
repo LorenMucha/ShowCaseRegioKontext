@@ -8,7 +8,6 @@ import { TabElem } from './model/tabs-elem';
 })
 export class AppComponent {
 
-
   tabList: Array<TabElem> = [
     {
       title: "Wohnungsnachfrage",
@@ -22,9 +21,7 @@ export class AppComponent {
       title: "Marktdaten ",
       active: false,
     }]
-  tableSource: Array<any> = []
   selectedTab: TabElem = this.tabList[0]
-  displayedColumns: string[] = ['name', 'value'];
 
   objectKeys = Object.keys;
   checked: any;

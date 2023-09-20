@@ -7,7 +7,7 @@ main {
 }
 
 main .map-container {
-    height: max-content;
+    height: 100%;
     @apply w-full;
 }
 

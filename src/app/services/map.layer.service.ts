@@ -7,7 +7,8 @@ import Style from 'ol/style/Style'
 import GeoJSON from 'ol/format/GeoJSON'
 import { HttpClient } from '@angular/common/http'
 import { MapLayer } from '../model/map.layer'
-import { Observable, map, forkJoin, of } from 'rxjs'
+import { Observable, map, forkJoin, of, mergeMap, mergeAll, toArray, tap } from 'rxjs'
+import { Feature } from 'ol'
 
 
 @Injectable({
@@ -27,10 +28,25 @@ export class MapLayerService {
     return layer
   }
 
+  getFeatureNames() {
+    return this.getMapLayers()
+      .pipe(
+        mergeAll(),
+        mergeMap((value) => {
+          var source = value.layer.getSource()
+          var features = source.getFeatures() as Array<Feature>
+          return features
+        }),
+        map((feature) => {
+          return { name: feature.get('name'), ags: feature.get('nr') }
+        }),
+        toArray()
+      )
+  }
 
+  //FIXME: in einen ngrx store umschreiben !
   private getLayerBerlin(): Observable<MapLayer> {
     if (this.layerBerlin === undefined) {
-      console.log("getLayerBerlin")
       return this.httpClient.get('assets/geojson/bez_berlin_2023.json')
         .pipe(
           map((layer) => {
@@ -58,7 +74,6 @@ export class MapLayerService {
 
   private getLayerBrB(): Observable<MapLayer> {
     if (this.layerBrb === undefined) {
-      console.log("getLayerBrb")
       return this.httpClient.get('assets/geojson/gem_brb_2023.json')
         .pipe(
           map((layer) => {
