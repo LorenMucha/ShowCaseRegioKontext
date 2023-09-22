@@ -1,0 +1,3 @@
+::ng-deep .bw {
+    filter: grayscale(100%);
+}

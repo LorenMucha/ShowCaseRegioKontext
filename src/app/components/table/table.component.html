@@ -16,17 +16,17 @@
 
             <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef> id </th>
-                <td mat-cell *matCellDef="let element; let i = index;" #[{{element.ags}}]>{{i+1}}</td>
+                <td mat-cell *matCellDef="let element; let i = index;">{{i+1}}</td>
             </ng-container>
 
             <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef> Gemeinde </th>
-                <td mat-cell *matCellDef="let element" #element.ags> {{element.name}} </td>
+                <td mat-cell *matCellDef="let element"> {{element.name}} </td>
             </ng-container>
 
-            <ng-container matColumnDef="ags">
-                <th mat-header-cell *matHeaderCellDef> AGS </th>
-                <td mat-cell *matCellDef="let element" #element.ags> {{element.ags}} </td>
+            <ng-container matColumnDef="value">
+                <th mat-header-cell *matHeaderCellDef> Value </th>
+                <td mat-cell *matCellDef="let element"> {{element.value}} </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
