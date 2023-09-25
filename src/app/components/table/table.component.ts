@@ -1,4 +1,5 @@
 import { AfterViewInit, Component } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
 import { Subject } from 'rxjs';
 import { map, takeUntil, toArray } from 'rxjs/operators';
 import { TableElem } from 'src/app/model/table-elem';
@@ -11,7 +12,8 @@ import { Bounds, Indicator, MapLayerService } from 'src/app/services/map.layer.s
   styleUrls: ['./table.component.css']
 })
 export class TableComponent implements AfterViewInit {
-  tableSource: Array<TableElem> = []
+
+  tableSource = new MatTableDataSource<TableElem>();
   tableStream$ = new Subject<TableElem[]>
   displayedColumns: string[] = ['id', 'name', 'value'];
   constructor(private mapService: MapLayerService) { }
@@ -22,13 +24,19 @@ export class TableComponent implements AfterViewInit {
     return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
   }
 
+  applyFilter(event: KeyboardEvent) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.tableSource.filter = filterValue.trim().toLowerCase();
+  }
+
   ngAfterViewInit(): void {
     this.mapService.receivedTableFeatures$.pipe(
-      takeUntil(this.tableSource),
+      takeUntil(this.tableSource.data),
       map(data => data.sort(this.sortByName))
     ).subscribe((elements) => {
-      //FIXME: Tabelle wird nicht angezeigt
-      elements.forEach((elem) => this.tableSource.push(elem))
+      var tableElementsArr: TableElem[] = []
+      elements.forEach((elem) => tableElementsArr.push(elem))
+      this.tableSource.data = tableElementsArr
     })
   }
 
