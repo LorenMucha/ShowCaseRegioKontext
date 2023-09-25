@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { TabElem } from './model/tabs-elem';
+import { Bounds } from './services/map.layer.service';
+import { MapComponent } from './components/map/map.component';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-root',
@@ -24,9 +27,22 @@ export class AppComponent {
   selectedTab: TabElem = this.tabList[0]
 
   objectKeys = Object.keys;
-  checked: any;
+  checked_b: boolean = true;
+  checked_brb: boolean = false;
   disabled: any;
+  berlin = Bounds.Berlin
+  brb = Bounds.Brandenburg
+  @ViewChild(MapComponent) map: MapComponent | undefined;
+
   changeTab(tab: TabElem) {
     this.selectedTab = tab
+  }
+
+  changeBoundCheckbox(checkbox: MatCheckboxChange, bounds: Bounds) {
+    if(checkbox.checked){
+      this.map?.addMapLayer(bounds,2021)
+    }else{
+      this.map?.removeMapLayer(bounds)
+    }
   }
 }

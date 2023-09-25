@@ -1,6 +1,9 @@
 import { AfterViewInit, Component } from '@angular/core';
-import { map } from 'rxjs/operators';
-import { MapLayerService } from 'src/app/services/map.layer.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { Subject } from 'rxjs';
+import { map, takeUntil, toArray } from 'rxjs/operators';
+import { TableElem } from 'src/app/model/table-elem';
+import { Bounds, Indicator, MapLayerService } from 'src/app/services/map.layer.service';
 
 
 @Component({
@@ -9,19 +12,35 @@ import { MapLayerService } from 'src/app/services/map.layer.service';
   styleUrls: ['./table.component.css']
 })
 export class TableComponent implements AfterViewInit {
-  tableSource: Array<any> = []
-  displayedColumns: string[] = ['id', 'name', 'ags'];
+
+  tableSource = new MatTableDataSource<TableElem>();
+  tableStream$ = new Subject<TableElem[]>
+  displayedColumns: string[] = ['id', 'name', 'value'];
   constructor(private mapService: MapLayerService) { }
 
-  sortByName(a: any, b: any) {
+  sortByName(a: TableElem, b: TableElem) {
     const nameA = a.name.toLocaleUpperCase();
     const nameB = b.name.toLocaleUpperCase();
     return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
   }
 
+  applyFilter(event: KeyboardEvent) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.tableSource.filter = filterValue.trim().toLowerCase();
+  }
+
   ngAfterViewInit(): void {
-    this.mapService.getFeatureNames()
-      .pipe(map(data => data.sort(this.sortByName)))
-      .subscribe((x) => this.tableSource = x)
+    this.mapService.receivedTableFeatures$.pipe(
+      takeUntil(this.tableSource.data),
+      map(data => data.sort(this.sortByName))
+    ).subscribe((elements) => {
+      var tableElementsArr: TableElem[] = []
+      elements.forEach((elem) => tableElementsArr.push(elem))
+      this.tableSource.data = tableElementsArr
+    })
+  }
+
+  ngOnDestroy() {
+    this.tableStream$.complete();
   }
 }

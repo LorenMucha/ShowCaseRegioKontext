@@ -7,45 +7,79 @@ import Style from 'ol/style/Style'
 import GeoJSON from 'ol/format/GeoJSON'
 import { HttpClient } from '@angular/common/http'
 import { MapLayer } from '../model/map.layer'
-import { Observable, map, forkJoin, of, mergeMap, mergeAll, toArray, tap } from 'rxjs'
+import { Observable, map, forkJoin, of, mergeMap, mergeAll, toArray, tap, filter, zip, BehaviorSubject, withLatestFrom, Subject, switchMap } from 'rxjs'
 import { Feature } from 'ol'
+import { ZuUndFortzuege } from '../model/indicators/zu.fortzuege'
+import { TableElem } from '../model/table-elem'
+import { colorRange } from '@heyeso/color-range'
 
+export enum Indicator {
+  ZuUndFortzuege = 'zu_fortzuege.json'
+}
+
+export enum Bounds {
+  Berlin, Brandenburg
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class MapLayerService {
-  private layerBrb: MapLayer | undefined
-  private layerBerlin: MapLayer | undefined
+  private layerBrb: VectorLayer<any> | undefined
+  private layerBerlin: VectorLayer<any> | undefined
+  private tableFeatures: Subject<TableElem[]> = new Subject<TableElem[]>()
+  public receivedTableFeatures$ = this.tableFeatures.asObservable()
+  public mapLayerBerlin: MapLayer | undefined
+  public mapLayerBrandenburg: MapLayer | undefined
   constructor(private httpClient: HttpClient) { }
 
-  getMapLayers(): Observable<MapLayer[]> {
-    return forkJoin([this.getLayerBerlin(), this.getLayerBrB()])
-  }
+  getMapLayerForBounds(indicator: Indicator, bounds: Bounds, year: number): Observable<MapLayer> {
+    const tableSource: TableElem[] = []
+    if (bounds == Bounds.Berlin) {
+      return forkJoin([this.getLayerBerlin(), this.getIndicatorData(indicator, year)])
+        .pipe(
+          mergeMap(([layer, data]) => {
+            var vector = new VectorSource()
+            var source = layer.getSource()
+            var features = source.getFeatures() as Array<Feature>
 
-  getLayer(id: number): Observable<MapLayer> {
-    const layer = id === 1 ? this.getLayerBerlin() : this.getLayerBrB()
-    return layer
-  }
+            features.forEach((feature) => {
+              var value = 0
+              data
+                .filter((x) => x.Name.includes(feature.get('name')))
+                .map((y) => value += y['Fortzüge insgesamt'])
 
-  getFeatureNames() {
-    return this.getMapLayers()
-      .pipe(
-        mergeAll(),
-        mergeMap((value) => {
-          var source = value.layer.getSource()
-          var features = source.getFeatures() as Array<Feature>
-          return features
-        }),
-        map((feature) => {
-          return { name: feature.get('name'), ags: feature.get('nr') }
-        }),
-        toArray()
+              vector.addFeature(new Feature({
+                value: value,
+                geometry: feature.getGeometry(),
+                name: feature.get('name')
+              }))
+              //create Table source
+              const tableFeature = new TableElem(feature.get('nr'), feature.get('name'), value)
+              tableSource.push(tableFeature)
+            })
+            const vectorLayer = new VectorLayer({ source: vector })
+            const max = Math.max(...tableSource.map((item) => item.value))
+            const min = Math.min(...tableSource.map((item) => item.value))
+            const mapLayer = new MapLayer(1, vectorLayer, 'Berlin', indicator, min, max)
+            this.mapLayerBerlin = mapLayer
+            this.tableFeatures.next(tableSource)
+            return of(this.mapLayerBerlin)
+          }),
+          this.styleMapLayer
+        )
+    } else {
+      return this.getLayerBrB().pipe(
+        mergeMap((layer) => {
+          const vectorLayer = new VectorLayer({ source: layer.getSource() })
+          this.mapLayerBrandenburg = new MapLayer(2, vectorLayer, 'Brandenburg', indicator)
+          return of(this.mapLayerBrandenburg)
+        })
       )
+    }
   }
 
-  //FIXME: in einen ngrx store umschreiben !
-  private getLayerBerlin(): Observable<MapLayer> {
+  private getLayerBerlin(): Observable<VectorLayer<any>> {
     if (this.layerBerlin === undefined) {
       return this.httpClient.get('assets/geojson/ortsteile_berlin_2023.json')
         .pipe(
@@ -53,18 +87,8 @@ export class MapLayerService {
             const vectorSource = new VectorSource({
               features: new GeoJSON().readFeatures(layer)
             })
-            const vector = new VectorLayer({
-              source: vectorSource,
-              style: new Style({
-                fill: new Fill({
-                  color: `rgba(124,124,0, 0.5)`
-                }),
-                stroke: new Stroke({
-                  color: 'black'
-                })
-              })
-            })
-            this.layerBerlin = new MapLayer(1, vector, "Ortsteile Berlin")
+            const vector = new VectorLayer({ source: vectorSource })
+            this.layerBerlin = vector
             return this.layerBerlin
           }))
     } else {
@@ -72,7 +96,7 @@ export class MapLayerService {
     }
   }
 
-  private getLayerBrB(): Observable<MapLayer> {
+  private getLayerBrB(): Observable<VectorLayer<any>> {
     if (this.layerBrb === undefined) {
       return this.httpClient.get('assets/geojson/gem_brb_2023.json')
         .pipe(
@@ -80,22 +104,51 @@ export class MapLayerService {
             const vectorSource = new VectorSource({
               features: new GeoJSON().readFeatures(layer)
             })
-            const vector = new VectorLayer({
-              source: vectorSource,
-              style: new Style({
-                fill: new Fill({
-                  color: `rgba(124,252,0, 0.5)`
-                }),
-                stroke: new Stroke({
-                  color: 'black'
-                })
-              })
-            })
-            this.layerBrb = new MapLayer(1, vector, "Gemeinden Berlin")
+            const vector = new VectorLayer({ source: vectorSource })
+            this.layerBrb = vector
             return this.layerBrb
           }))
     } else {
       return of(this.layerBrb)
     }
+  }
+
+  private getIndicatorData(indicator: Indicator, year: number) {
+    return this.httpClient.get<ZuUndFortzuege[]>(`assets/data/${indicator}`)
+      .pipe(
+        mergeAll(),
+        filter((x) => !x.Kennziffer === false && x.Jahr == year),
+        toArray(),
+      )
+  }
+
+  private styleMapLayer(layer: Observable<MapLayer>): Observable<MapLayer> {
+    return layer.pipe(
+      mergeMap((item) => {
+        const test_colors = [[255, 50, 0], [124, 252, 0]];
+        var vector = new VectorSource()
+        var source = item.layer.getSource()
+        var features = source.getFeatures() as Array<Feature>
+
+        features.forEach((layer) => {
+          const value = layer.get('value')
+          const temperatureMap = colorRange(test_colors, [item.min, item.max])
+          const color = temperatureMap.getColor(value)
+          const style = new Style({
+            fill: new Fill({
+              color: `rgba(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b},  0.5)`
+            }),
+            stroke: new Stroke({
+              color: 'black'
+            })
+          })
+          layer.setStyle(style)
+          layer.set('style', style)
+          vector.addFeature(layer)
+        })
+        item.setLayer(new VectorLayer({ source: vector }))
+        return of(item)
+      })
+    )
   }
 }
