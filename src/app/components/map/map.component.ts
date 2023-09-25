@@ -12,6 +12,7 @@ import Style from 'ol/style/Style'
 import Fill from 'ol/style/Fill'
 import Stroke from 'ol/style/Stroke'
 import { Feature } from 'ol'
+import VectorLayer from 'ol/layer/Vector'
 
 
 const berlinLonLat = [13.404954, 52.520008]
@@ -25,6 +26,8 @@ const mapCenter = fromLonLat(berlinLonLat)
 })
 export class MapComponent implements OnInit, AfterViewInit {
   private select = new Select();
+  private selectedIndicator: Indicator = Indicator.ZuUndFortzuege
+  private selectedYear: number = 2021
   private map: OlMap = new OlMap
   private baseMap: TileLayer<any> = new TileLayer({
     className: 'bw',
@@ -48,7 +51,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       target: 'ol-map'
     })
 
-    this.mapService.getMapLayerForBounds(Indicator.ZuUndFortzuege, Bounds.Berlin, 2021).subscribe((x) => {
+    this.mapService.getMapLayerForBounds(this.selectedIndicator, Bounds.Berlin, this.selectedYear).subscribe((x) => {
       this.map.addLayer(x.layer)
     })
     this.map.addInteraction(this.select);
@@ -57,11 +60,8 @@ export class MapComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.select.on('select', (e) => {
       const feature = e.selected[0] as Feature
-
-      console.log(e.selected[0].getStyle())
       feature.setStyle(new Style({
-        // fill: new Fill({
-        // }),
+        fill: feature.get('style').getFill(),
         stroke: new Stroke({ color: 'black', width: 10 })
       }))
       const popup = new Overlay({ element: document.getElementById('popup')! })
@@ -71,6 +71,22 @@ export class MapComponent implements OnInit, AfterViewInit {
       this.map.addOverlay(popup)
       this.showPopUp = true
     })
+  }
+
+  addMapLayer(bounds: Bounds, year: number): void {
+    this.mapService.getMapLayerForBounds(this.selectedIndicator, bounds, year).subscribe((layer) => {
+      console.log(layer)
+      const vector = layer.layer
+      if (this.map.getLayers().getArray().includes(vector)) {
+        this.map.removeLayer(vector)
+      }
+      this.map.addLayer(vector)
+    })
+  }
+
+  removeMapLayer(bounds: Bounds): void {
+    var layer = bounds === Bounds.Berlin ? this.mapService.mapLayerBerlin : this.mapService.mapLayerBrandenburg
+    this.map.removeLayer(layer?.layer!)
   }
 
   closePopUp() {

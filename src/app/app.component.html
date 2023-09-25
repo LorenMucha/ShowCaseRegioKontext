@@ -20,19 +20,19 @@
         <div class="px-2 col-span-2">
           <div class="pl-5">
             <span class="mr-2">2018</span>
-            <mat-slider color="primary" min="2018" max="2022" step="1" showTickMarks discrete class="time-slider"
+            <mat-slider color="primary" min="2018" max="2021" step="1" showTickMarks discrete class="time-slider"
               disableRipple tickinterval="auto">
-              <input matSliderThumb>
+              <input matSliderThumb value="2021">
             </mat-slider>
-            <span class="ml-2">2022</span>
+            <span class="ml-2">2021</span>
           </div>
           <div>
             <div class="grid grid-cols-3 p-3" role="group">
               <div class="w-max">
-                <mat-checkbox [(ngModel)]="checked"></mat-checkbox><span class="ml-2">Berlin</span>
+                <mat-checkbox [(ngModel)]="checked_b" (change)="changeBoundCheckbox($event,berlin)"></mat-checkbox><span class="ml-2">Berlin</span>
               </div>
               <div class="w-max">
-                <mat-checkbox [(ngModel)]="checked"></mat-checkbox><span class="ml-2">Brandenburg</span>
+                <mat-checkbox [(ngModel)]="checked_brb" (change)="changeBoundCheckbox($event, brb)"></mat-checkbox><span class="ml-2">Brandenburg</span>
               </div>
             </div>
             <app-table></app-table>

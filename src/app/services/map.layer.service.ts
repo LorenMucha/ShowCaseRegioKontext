@@ -29,7 +29,8 @@ export class MapLayerService {
   private layerBerlin: VectorLayer<any> | undefined
   private tableFeatures: Subject<TableElem[]> = new Subject<TableElem[]>()
   public receivedTableFeatures$ = this.tableFeatures.asObservable()
-  public currentLayer: MapLayer | undefined
+  public mapLayerBerlin: MapLayer | undefined
+  public mapLayerBrandenburg: MapLayer | undefined
   constructor(private httpClient: HttpClient) { }
 
   getMapLayerForBounds(indicator: Indicator, bounds: Bounds, year: number): Observable<MapLayer> {
@@ -58,17 +59,23 @@ export class MapLayerService {
               tableSource.push(tableFeature)
             })
             const vectorLayer = new VectorLayer({ source: vector })
-            const max = Math.max(...tableSource.map((item)=> item.value))
-            const min = Math.min(...tableSource.map((item)=> item.value))
-            const mapLayer = new MapLayer(1, vectorLayer, 'Berlin', indicator,min, max)
-            this.currentLayer = mapLayer
+            const max = Math.max(...tableSource.map((item) => item.value))
+            const min = Math.min(...tableSource.map((item) => item.value))
+            const mapLayer = new MapLayer(1, vectorLayer, 'Berlin', indicator, min, max)
+            this.mapLayerBerlin = mapLayer
             this.tableFeatures.next(tableSource)
-            return of(this.currentLayer)
+            return of(this.mapLayerBerlin)
           }),
           this.styleMapLayer
         )
     } else {
-      return of(new MapLayer())
+      return this.getLayerBrB().pipe(
+        mergeMap((layer) => {
+          const vectorLayer = new VectorLayer({ source: layer.getSource() })
+          this.mapLayerBrandenburg = new MapLayer(2, vectorLayer, 'Brandenburg', indicator)
+          return of(this.mapLayerBrandenburg)
+        })
+      )
     }
   }
 
@@ -118,11 +125,11 @@ export class MapLayerService {
   private styleMapLayer(layer: Observable<MapLayer>): Observable<MapLayer> {
     return layer.pipe(
       mergeMap((item) => {
-        const test_colors = [[255, 50, 0], [124,252,0]];
+        const test_colors = [[255, 50, 0], [124, 252, 0]];
         var vector = new VectorSource()
         var source = item.layer.getSource()
         var features = source.getFeatures() as Array<Feature>
-      
+
         features.forEach((layer) => {
           const value = layer.get('value')
           const temperatureMap = colorRange(test_colors, [item.min, item.max])
@@ -136,6 +143,7 @@ export class MapLayerService {
             })
           })
           layer.setStyle(style)
+          layer.set('style', style)
           vector.addFeature(layer)
         })
         item.setLayer(new VectorLayer({ source: vector }))
