@@ -29,7 +29,7 @@ export class MapLayerService {
   private layerBerlin: VectorLayer<any> | undefined
   private tableFeatures: Subject<TableElem[]> = new Subject<TableElem[]>()
   public receivedTableFeatures$ = this.tableFeatures.asObservable()
-  private currentLayer: Observable<MapLayer> | undefined
+  public currentLayer: MapLayer | undefined
   constructor(private httpClient: HttpClient) { }
 
   getMapLayerForBounds(indicator: Indicator, bounds: Bounds, year: number): Observable<MapLayer> {
@@ -61,9 +61,9 @@ export class MapLayerService {
             const max = Math.max(...tableSource.map((item)=> item.value))
             const min = Math.min(...tableSource.map((item)=> item.value))
             const mapLayer = new MapLayer(1, vectorLayer, 'Berlin', indicator,min, max)
-            this.currentLayer = of(mapLayer)
+            this.currentLayer = mapLayer
             this.tableFeatures.next(tableSource)
-            return this.currentLayer
+            return of(this.currentLayer)
           }),
           this.styleMapLayer
         )
@@ -125,10 +125,8 @@ export class MapLayerService {
       
         features.forEach((layer) => {
           const value = layer.get('value')
-          console.log(item.min, item.max)
           const temperatureMap = colorRange(test_colors, [item.min, item.max])
           const color = temperatureMap.getColor(value)
-          console.log(`rgba(${color.rgb.r}, ${color.rgb.g}. ${color.rgb.b}, ${color.rgb.b}, 0.5)`)
           const style = new Style({
             fill: new Fill({
               color: `rgba(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b},  0.5)`

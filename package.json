@@ -27,7 +27,6 @@
     "@ngrx/store": "^16.2.0",
     "@ngrx/store-devtools": "^16.2.0",
     "@types/geojson": "^7946.0.10",
-    "@types/lodash": "^4.14.199",
     "gh-pages": "^6.0.0",
     "ol": "^7.4.0",
     "rxjs": "~7.8.0",

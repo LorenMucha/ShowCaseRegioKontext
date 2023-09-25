@@ -1,0 +1,7 @@
+<div class="h-[65vh]">
+    <div id="ol-map" class="h-full w-full"></div>
+    <div id="popup" class="ol-popup" [hidden]="!showPopUp">
+        <a href="#" id="popup-closer" class="ol-popup-closer" (click)="closePopUp()"></a>
+        <div id="popup-content" [innerHTML]="popUpContent"></div>
+    </div>
+</div>
