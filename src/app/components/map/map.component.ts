@@ -66,7 +66,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       }))
       const popup = new Overlay({ element: document.getElementById('popup')! })
       const extent = getCenter(feature.getGeometry()?.getExtent() as Extent)
-      this.popUpContent = `<div><b>name:</b> ${feature.get('name')}</div><div><b>value:</b> ${feature.get('value')}</div>`
+      this.popUpContent = `<div><b>Region:</b> ${feature.get('name')}</div><div><b>Wert:</b> ${feature.get('value')}</div>`
       popup.setPosition(extent)
       this.map.addOverlay(popup)
       this.showPopUp = true

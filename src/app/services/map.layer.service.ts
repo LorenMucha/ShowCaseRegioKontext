@@ -44,18 +44,21 @@ export class MapLayerService {
             var features = source.getFeatures() as Array<Feature>
 
             features.forEach((feature) => {
-              var value = 0
+              let value = 0
+              const name = feature.get('PLR_NAME')
               data
-                .filter((x) => x.Name.includes(feature.get('name')))
+                .filter((x) => name.includes(x.Name))
                 .map((y) => value += y['Fortzüge insgesamt'])
-
+              
               vector.addFeature(new Feature({
                 value: value,
                 geometry: feature.getGeometry(),
-                name: feature.get('name')
+                name: name
               }))
+
               //create Table source
-              const tableFeature = new TableElem(feature.get('nr'), feature.get('name'), value)
+              const tableFeature = new TableElem(feature.get('PGR_ID'), name, value)
+              console.log(name, tableSource.includes(tableFeature))
               tableSource.push(tableFeature)
             })
             const vectorLayer = new VectorLayer({ source: vector })
@@ -81,7 +84,7 @@ export class MapLayerService {
 
   private getLayerBerlin(): Observable<VectorLayer<any>> {
     if (this.layerBerlin === undefined) {
-      return this.httpClient.get('assets/geojson/ortsteile_berlin_2023.json')
+      return this.httpClient.get('assets/geojson/lor_berlin_2021.json')
         .pipe(
           map((layer) => {
             const vectorSource = new VectorSource({
