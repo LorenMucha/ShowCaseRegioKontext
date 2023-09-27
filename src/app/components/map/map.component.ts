@@ -5,14 +5,15 @@ import TileLayer from 'ol/layer/Tile'
 import { fromLonLat, toLonLat } from 'ol/proj.js'
 import Select from 'ol/interaction/Select'
 import OSM from 'ol/source/OSM';
-import { Bounds, Indicator, MapLayerService } from 'src/app/services/map.layer.service'
+import { DataService } from 'src/app/services/data.service'
 import Overlay from 'ol/Overlay'
 import { Extent, getCenter } from 'ol/extent'
 import Style from 'ol/style/Style'
-import Fill from 'ol/style/Fill'
 import Stroke from 'ol/style/Stroke'
 import { Feature } from 'ol'
-import VectorLayer from 'ol/layer/Vector'
+import { Indicator } from 'src/app/model/indicators/indicator'
+import { Bounds } from 'src/app/model/bounds'
+import { MapLayer } from 'src/app/model/map.layer'
 
 
 const berlinLonLat = [13.404954, 52.520008]
@@ -27,18 +28,18 @@ const mapCenter = fromLonLat(berlinLonLat)
 export class MapComponent implements OnInit, AfterViewInit {
   private select = new Select();
   private selectedIndicator: Indicator = Indicator.ZuUndFortzuege
+  private selectedLayer: Map<Bounds, MapLayer> = new Map<Bounds, MapLayer>()
   private selectedYear: number = 2021
+  private selectedBounds: Bounds = Bounds.Berlin
   private map: OlMap = new OlMap
   private baseMap: TileLayer<any> = new TileLayer({
     className: 'bw',
     source: new OSM(),
   })
-
-  private currentLayer: TileLayer<any> | undefined
   showPopUp: boolean = false
   popUpContent: string = ''
 
-  constructor(private mapService: MapLayerService) { }
+  constructor(private mapService: DataService) { }
 
   ngOnInit(): void {
 
@@ -51,9 +52,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       target: 'ol-map'
     })
 
-    this.mapService.getMapLayerForBounds(this.selectedIndicator, Bounds.Berlin, this.selectedYear).subscribe((x) => {
-      this.map.addLayer(x.layer)
-    })
+    this.addMapLayer(this.selectedBounds, this.selectedYear)
     this.map.addInteraction(this.select);
   }
 
@@ -73,20 +72,29 @@ export class MapComponent implements OnInit, AfterViewInit {
     })
   }
 
-  addMapLayer(bounds: Bounds, year: number): void {
-    this.mapService.getMapLayerForBounds(this.selectedIndicator, bounds, year).subscribe((layer) => {
-      console.log(layer)
+  addMapLayer(bounds?: Bounds, year?: number): void {
+    this.selectedBounds = bounds === undefined ? this.selectedBounds : bounds
+    this.selectedYear = year === undefined ? this.selectedYear : year
+
+    this.mapService.getMapLayerForBounds(this.selectedIndicator, this.selectedBounds, this.selectedYear).subscribe((layer) => {
       const vector = layer.layer
-      if (this.map.getLayers().getArray().includes(vector)) {
-        this.map.removeLayer(vector)
+      if (this.selectedLayer.has(this.selectedBounds)) {
+        var tempLayer: MapLayer = this.selectedLayer.get(this.selectedBounds)!
+        this.map.removeLayer(tempLayer.layer)
       }
       this.map.addLayer(vector)
+      this.selectedLayer.set(this.selectedBounds, layer)
     })
   }
 
   removeMapLayer(bounds: Bounds): void {
     var layer = bounds === Bounds.Berlin ? this.mapService.mapLayerBerlin : this.mapService.mapLayerBrandenburg
     this.map.removeLayer(layer?.layer!)
+    this.selectedLayer.forEach((item) => {
+      if (item.bounds == bounds) {
+        this.selectedLayer.delete(bounds)
+      }
+    })
   }
 
   closePopUp() {

@@ -3,7 +3,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Subject } from 'rxjs';
 import { map, takeUntil, toArray } from 'rxjs/operators';
 import { TableElem } from 'src/app/model/table-elem';
-import { Bounds, Indicator, MapLayerService } from 'src/app/services/map.layer.service';
+import { DataService } from 'src/app/services/data.service';
 
 
 @Component({
@@ -16,7 +16,7 @@ export class TableComponent implements AfterViewInit {
   tableSource = new MatTableDataSource<TableElem>();
   tableStream$ = new Subject<TableElem[]>
   displayedColumns: string[] = ['id', 'name', 'value'];
-  constructor(private mapService: MapLayerService) { }
+  constructor(private dataService: DataService) { }
 
   sortByName(a: TableElem, b: TableElem) {
     const nameA = a.name.toLocaleUpperCase();
@@ -30,7 +30,7 @@ export class TableComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.mapService.receivedTableFeatures$.pipe(
+    this.dataService.receivedTableFeatures$.pipe(
       takeUntil(this.tableSource.data),
       map(data => data.sort(this.sortByName))
     ).subscribe((elements) => {

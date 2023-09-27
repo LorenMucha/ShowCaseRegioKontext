@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MapLayerService } from './MapLayerService';
+import { DataService } from './data.service';
 
 describe('MapLayerService', () => {
-  let service: MapLayerService;
+  let service: DataService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(MapLayerService);
+    service = TestBed.inject(DataService);
   });
 
   it('should be created', () => {
@@ -15,7 +15,7 @@ describe('MapLayerService', () => {
   });
 
   it('extract feature names from the maplayer'), () => {
-    var features = service.getFeatureNames()
+    var features = service.getMapLayerForBounds()
     expect(features).not.toBeNull
   }
 });

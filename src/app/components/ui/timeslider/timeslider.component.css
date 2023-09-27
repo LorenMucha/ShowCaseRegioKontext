@@ -1,0 +1,23 @@
+::ng-deep .mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__shadow {
+    background-color: orange;
+}
+
+::ng-deep .mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__track::after {
+    background-color: orange !important;
+}
+
+.time-slider {
+    --mdc-slider-track-fill: rgb(5 46 22) !important;
+    --mdc-slider-handle-color: rgb(5 46 22) !important;
+    --mdc-slider-active-track-color: rgb(5 46 22) !important;
+    --mdc-slider-inactive-track-color: rgb(5 46 22) !important;
+}
+
+::ng-deep .mdc-slider__thumb-knob {
+    background-color: rgb(5 46 22) !important;
+    border-color: rgb(5 46 22) !important;
+}
+
+::ng-deep .mdc-slider .mdc-slider__value-indicator {
+    transform: none !important;
+}

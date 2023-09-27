@@ -19,7 +19,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
 import { TableComponent } from './components/table/table.component';
-import { MapLayerService } from './services/map.layer.service';
+import { DataService } from './services/data.service';
+import { TimesliderComponent } from './components/ui/timeslider/timeslider.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { MapLayerService } from './services/map.layer.service';
     MapComponent,
     TapsComponent,
     TableComponent,
+    TimesliderComponent,
   ],
   imports: [
     HttpClientModule,
@@ -37,7 +39,7 @@ import { MapLayerService } from './services/map.layer.service';
     MatSliderModule,
     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatTableModule, MatIconModule, MatCheckboxModule
   ],
-  providers: [MapLayerService, {
+  providers: [DataService, {
     provide: 'mapId',
     useValue: 'ol-map'
   }],

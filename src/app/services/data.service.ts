@@ -7,30 +7,25 @@ import Style from 'ol/style/Style'
 import GeoJSON from 'ol/format/GeoJSON'
 import { HttpClient } from '@angular/common/http'
 import { MapLayer } from '../model/map.layer'
-import { Observable, map, forkJoin, of, mergeMap, mergeAll, toArray, tap, filter, zip, BehaviorSubject, withLatestFrom, Subject, switchMap } from 'rxjs'
+import { Observable, map, forkJoin, of, mergeMap, mergeAll, toArray, filter, Subject, tap } from 'rxjs'
 import { Feature } from 'ol'
 import { ZuUndFortzuege } from '../model/indicators/zu.fortzuege'
 import { TableElem } from '../model/table-elem'
 import { colorRange } from '@heyeso/color-range'
-
-export enum Indicator {
-  ZuUndFortzuege = 'zu_fortzuege.json'
-}
-
-export enum Bounds {
-  Berlin, Brandenburg
-}
+import { Indicator } from '../model/indicators/indicator'
+import { Bounds } from '../model/bounds'
 
 @Injectable({
   providedIn: 'root',
 })
-export class MapLayerService {
+export class DataService {
   private layerBrb: VectorLayer<any> | undefined
   private layerBerlin: VectorLayer<any> | undefined
   private tableFeatures: Subject<TableElem[]> = new Subject<TableElem[]>()
   public receivedTableFeatures$ = this.tableFeatures.asObservable()
   public mapLayerBerlin: MapLayer | undefined
   public mapLayerBrandenburg: MapLayer | undefined
+  public receivedYears$: Subject<Set<number>> = new Subject<Set<number>>
   constructor(private httpClient: HttpClient) { }
 
   getMapLayerForBounds(indicator: Indicator, bounds: Bounds, year: number): Observable<MapLayer> {
@@ -49,7 +44,7 @@ export class MapLayerService {
               data
                 .filter((x) => name.includes(x.Name))
                 .map((y) => value += y['Fortzüge insgesamt'])
-              
+
               vector.addFeature(new Feature({
                 value: value,
                 geometry: feature.getGeometry(),
@@ -58,13 +53,12 @@ export class MapLayerService {
 
               //create Table source
               const tableFeature = new TableElem(feature.get('PGR_ID'), name, value)
-              console.log(name, tableSource.includes(tableFeature))
               tableSource.push(tableFeature)
             })
             const vectorLayer = new VectorLayer({ source: vector })
             const max = Math.max(...tableSource.map((item) => item.value))
             const min = Math.min(...tableSource.map((item) => item.value))
-            const mapLayer = new MapLayer(1, vectorLayer, 'Berlin', indicator, min, max)
+            const mapLayer = new MapLayer(1, vectorLayer, 'Berlin', indicator, min, max, Bounds.Berlin)
             this.mapLayerBerlin = mapLayer
             this.tableFeatures.next(tableSource)
             return of(this.mapLayerBerlin)
@@ -75,7 +69,7 @@ export class MapLayerService {
       return this.getLayerBrB().pipe(
         mergeMap((layer) => {
           const vectorLayer = new VectorLayer({ source: layer.getSource() })
-          this.mapLayerBrandenburg = new MapLayer(2, vectorLayer, 'Brandenburg', indicator)
+          this.mapLayerBrandenburg = new MapLayer(2, vectorLayer, 'Brandenburg', indicator, undefined, undefined, Bounds.Brandenburg)
           return of(this.mapLayerBrandenburg)
         })
       )
@@ -117,11 +111,16 @@ export class MapLayerService {
   }
 
   private getIndicatorData(indicator: Indicator, year: number) {
+    const years = new Set<number>()
     return this.httpClient.get<ZuUndFortzuege[]>(`assets/data/${indicator}`)
       .pipe(
         mergeAll(),
+        tap((item) => {
+          years.add(item.Jahr)
+        }),
         filter((x) => !x.Kennziffer === false && x.Jahr == year),
         toArray(),
+        tap(() => this.receivedYears$.next(years))
       )
   }
 
