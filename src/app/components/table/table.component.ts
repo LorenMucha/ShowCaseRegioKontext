@@ -1,6 +1,6 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { map, takeUntil, toArray } from 'rxjs/operators';
 import { TableElem } from 'src/app/model/table-elem';
 import { DataService } from 'src/app/services/data.service';
@@ -11,10 +11,10 @@ import { DataService } from 'src/app/services/data.service';
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.css']
 })
-export class TableComponent implements AfterViewInit {
+export class TableComponent implements AfterViewInit, OnDestroy {
 
   tableSource = new MatTableDataSource<TableElem>();
-  tableStream$ = new Subject<TableElem[]>
+  private tableSourceStream$: BehaviorSubject<TableElem[]> | undefined
   displayedColumns: string[] = ['id', 'name', 'value'];
   constructor(private dataService: DataService) { }
 
@@ -30,7 +30,8 @@ export class TableComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.dataService.receivedTableFeatures$.pipe(
+    this.tableSourceStream$ = this.dataService.getTableFeatures()
+    this.tableSourceStream$.pipe(
       takeUntil(this.tableSource.data),
       map(data => data.sort(this.sortByName))
     ).subscribe((elements) => {
@@ -41,6 +42,6 @@ export class TableComponent implements AfterViewInit {
   }
 
   ngOnDestroy() {
-    this.tableStream$.complete();
+    this.tableSourceStream$?.complete()
   }
 }

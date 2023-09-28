@@ -21,6 +21,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { TableComponent } from './components/table/table.component';
 import { DataService } from './services/data.service';
 import { TimesliderComponent } from './components/ui/timeslider/timeslider.component';
+import { LegendeComponent } from './components/legende/legende.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { TimesliderComponent } from './components/ui/timeslider/timeslider.compo
     TapsComponent,
     TableComponent,
     TimesliderComponent,
+    LegendeComponent,
   ],
   imports: [
     HttpClientModule,

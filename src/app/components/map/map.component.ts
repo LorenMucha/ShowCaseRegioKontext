@@ -11,9 +11,10 @@ import { Extent, getCenter } from 'ol/extent'
 import Style from 'ol/style/Style'
 import Stroke from 'ol/style/Stroke'
 import { Feature } from 'ol'
-import { Indicator } from 'src/app/model/indicators/indicator'
 import { Bounds } from 'src/app/model/bounds'
 import { MapLayer } from 'src/app/model/map.layer'
+import { IndicatorData } from 'src/app/model/indicators/indicator.data'
+import { ZuUndFortzuege } from 'src/app/model/indicators/zu.fortzuege'
 
 
 const berlinLonLat = [13.404954, 52.520008]
@@ -27,7 +28,7 @@ const mapCenter = fromLonLat(berlinLonLat)
 })
 export class MapComponent implements OnInit, AfterViewInit {
   private select = new Select();
-  private selectedIndicator: Indicator = Indicator.ZuUndFortzuege
+  private selectedIndicator: IndicatorData = new ZuUndFortzuege()
   private selectedLayer: Map<Bounds, MapLayer> = new Map<Bounds, MapLayer>()
   private selectedYear: number = 2021
   private selectedBounds: Bounds = Bounds.Berlin

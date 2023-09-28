@@ -1,5 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 
 @Component({
@@ -7,15 +7,16 @@ import { DataService } from 'src/app/services/data.service';
   templateUrl: './timeslider.component.html',
   styleUrls: ['./timeslider.component.css']
 })
-export class TimesliderComponent implements OnInit {
+export class TimesliderComponent implements OnInit, OnDestroy {
   min: number | undefined
   max: number | undefined
   @Output() yearEvent = new EventEmitter<number>();
   private years: number[] = []
-  private yearStream$ = new Subject<Set<number>>
+  private yearsStream$: BehaviorSubject<Set<number>> | undefined
   constructor(private dataService: DataService) { }
   ngOnInit(): void {
-    this.dataService.receivedYears$?.pipe(
+    this.yearsStream$ = this.dataService.getMapYears()
+    this.yearsStream$.pipe(
       takeUntil(this.years)
     ).subscribe((years) => {
       this.years = Array.from(years)
@@ -27,5 +28,9 @@ export class TimesliderComponent implements OnInit {
   changeYear(evt: Event) {
     const year = Number((evt.target as HTMLInputElement).value)
     this.yearEvent.emit(year)
+  }
+
+  ngOnDestroy() {
+    this.yearsStream$?.complete()
   }
 }

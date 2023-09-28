@@ -7,13 +7,13 @@ import Style from 'ol/style/Style'
 import GeoJSON from 'ol/format/GeoJSON'
 import { HttpClient } from '@angular/common/http'
 import { MapLayer } from '../model/map.layer'
-import { Observable, map, forkJoin, of, mergeMap, mergeAll, toArray, filter, Subject, tap } from 'rxjs'
+import { Observable, map, forkJoin, of, mergeMap, mergeAll, toArray, filter, tap, BehaviorSubject } from 'rxjs'
 import { Feature } from 'ol'
-import { ZuUndFortzuege } from '../model/indicators/zu.fortzuege'
+import { ZuUndFortzuege, ZuUndFortzuegeData } from '../model/indicators/zu.fortzuege'
 import { TableElem } from '../model/table-elem'
 import { colorRange } from '@heyeso/color-range'
-import { Indicator } from '../model/indicators/indicator'
 import { Bounds } from '../model/bounds'
+import { IndicatorData } from '../model/indicators/indicator.data'
 
 @Injectable({
   providedIn: 'root',
@@ -21,15 +21,32 @@ import { Bounds } from '../model/bounds'
 export class DataService {
   private layerBrb: VectorLayer<any> | undefined
   private layerBerlin: VectorLayer<any> | undefined
-  private tableFeatures: Subject<TableElem[]> = new Subject<TableElem[]>()
-  public receivedTableFeatures$ = this.tableFeatures.asObservable()
+  private tableFeatures: BehaviorSubject<TableElem[]> = new BehaviorSubject<TableElem[]>([])
+  private selectedIndicator: BehaviorSubject<IndicatorData> = new BehaviorSubject<IndicatorData>(new ZuUndFortzuege())
+  private selectedYear: number | undefined
   public mapLayerBerlin: MapLayer | undefined
   public mapLayerBrandenburg: MapLayer | undefined
-  public receivedYears$: Subject<Set<number>> = new Subject<Set<number>>
+  private receivedYears: BehaviorSubject<Set<number>> = new BehaviorSubject<Set<number>>(new Set())
   constructor(private httpClient: HttpClient) { }
 
-  getMapLayerForBounds(indicator: Indicator, bounds: Bounds, year: number): Observable<MapLayer> {
+  getTableFeatures(): BehaviorSubject<TableElem[]> {
+    return this.tableFeatures
+  }
+
+  getMapYears(): BehaviorSubject<Set<number>> {
+    return this.receivedYears
+  }
+
+  getSelectedIndicator(): BehaviorSubject<IndicatorData> {
+    return this.selectedIndicator
+  }
+
+  getSelectedYear(): number { return this.selectedYear! }
+
+  getMapLayerForBounds(indicator: IndicatorData, bounds: Bounds, year: number): Observable<MapLayer> {
     const tableSource: TableElem[] = []
+    this.selectedIndicator.next(indicator)
+    this.selectedYear = year
     if (bounds == Bounds.Berlin) {
       return forkJoin([this.getLayerBerlin(), this.getIndicatorData(indicator, year)])
         .pipe(
@@ -110,9 +127,9 @@ export class DataService {
     }
   }
 
-  private getIndicatorData(indicator: Indicator, year: number) {
+  private getIndicatorData(indicator: IndicatorData, year: number) {
     const years = new Set<number>()
-    return this.httpClient.get<ZuUndFortzuege[]>(`assets/data/${indicator}`)
+    return this.httpClient.get<ZuUndFortzuegeData[]>(`assets/data/${indicator.url}`)
       .pipe(
         mergeAll(),
         tap((item) => {
@@ -120,7 +137,7 @@ export class DataService {
         }),
         filter((x) => !x.Kennziffer === false && x.Jahr == year),
         toArray(),
-        tap(() => this.receivedYears$.next(years))
+        tap(() => this.receivedYears.next(years))
       )
   }
 
