@@ -1,8 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
 import { TabElem } from './model/tabs-elem';
-import { Bounds } from './services/map.layer.service';
 import { MapComponent } from './components/map/map.component';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { Bounds } from './model/bounds';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +25,6 @@ export class AppComponent {
       active: false,
     }]
   selectedTab: TabElem = this.tabList[0]
-
   objectKeys = Object.keys;
   checked_b: boolean = true;
   checked_brb: boolean = false;
@@ -39,10 +38,14 @@ export class AppComponent {
   }
 
   changeBoundCheckbox(checkbox: MatCheckboxChange, bounds: Bounds) {
-    if(checkbox.checked){
-      this.map?.addMapLayer(bounds,2021)
-    }else{
+    if (checkbox.checked) {
+      this.map?.addMapLayer(bounds, 2021)
+    } else {
       this.map?.removeMapLayer(bounds)
     }
+  }
+
+  changeTimeslider(year: number) {
+   this.map?.addMapLayer(undefined, year)
   }
 }

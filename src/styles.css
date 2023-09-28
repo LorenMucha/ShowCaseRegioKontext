@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+
+@layer components {
+    .disabled {
+        @apply text-gray-500 cursor-not-allowed;
+    }
+}
+
 html,
 body {
     height: 100%;

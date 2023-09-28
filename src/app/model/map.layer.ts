@@ -1,32 +1,40 @@
 import VectorLayer from "ol/layer/Vector"
-import { Indicator } from "../services/map.layer.service"
+import { IndicatorValues } from "./indicators/indicator.values"
+import { Bounds } from "./bounds"
+import { IndicatorData } from "./indicators/indicator.data"
 
 export interface MapLayer {
     id: number
     layer: VectorLayer<any>
     name: string
-    indicator: Indicator
+    indicator: IndicatorData
 }
 
 export class MapLayer implements MapLayer {
     min: number
     max: number
-    constructor(id?: number, layer?: VectorLayer<any>, name?: string, indicator?:Indicator, min?: number, max?: number) {
+    bounds: Bounds
+    constructor(id?: number, layer?: VectorLayer<any>, name?: string, indicator?: IndicatorData, min?: number, max?: number, bounds?: Bounds) {
         this.id = id!
         this.layer = layer!
         this.name = name!
         this.indicator = indicator!
         this.min = min!
         this.max = max!
+        this.bounds = bounds!
+    }
+
+    setBounds(bounds: Bounds) {
+        this.bounds = bounds
     }
 
     setLayer(layer: VectorLayer<any>) {
         this.layer = layer
     }
-    setMin(min:number){
+    setMin(min: number) {
         this.min = min
     }
-    setMax(max: number){
+    setMax(max: number) {
         this.max = max
     }
 }

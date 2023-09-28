@@ -1,0 +1,8 @@
+<div class="pl-5">
+    <span class="mr-2">{{min}}</span>
+    <mat-slider color="primary" [min]="min" [max]="max" step="1" showTickMarks discrete class="time-slider"
+        disableRipple tickinterval="auto">
+        <input matSliderThumb [value]="max" (input)="changeYear($event)">
+    </mat-slider>
+    <span class="ml-2">{{max}}</span>
+</div>
