@@ -54,6 +54,13 @@ export class DataService {
     if (bounds == Bounds.Berlin) {
       return forkJoin([this.getLayerBerlin(), this.getIndicatorData(indicator, year)])
         .pipe(
+          tap(([layer, data]) => {
+            data.forEach((data) => {
+              //create Table source
+              const tableFeature = new TableElem(data.Kennziffer, data.Name, data['Fortzüge insgesamt'])
+              tableSource.push(tableFeature)
+            })
+          }),
           mergeMap(([layer, data]) => {
             var vector = new VectorSource()
             var source = layer.getSource()
@@ -61,7 +68,6 @@ export class DataService {
 
             features.forEach((feature) => {
               let value = 0
-              let kennziffer = feature.get('broker Dow')
               const name = feature.get('PROGNOSERA')
               data
                 .filter((x) => name.includes(x.Name))
@@ -72,10 +78,6 @@ export class DataService {
                 geometry: feature.getGeometry(),
                 name: name
               }))
-
-              //create Table source
-              const tableFeature = new TableElem(kennziffer, name, value)
-              tableSource.push(tableFeature)
             })
             const vectorLayer = new VectorLayer({ source: vector })
             const max = Math.max(...tableSource.map((item) => item.value))
