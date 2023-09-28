@@ -15,6 +15,10 @@ import { colorRange } from '@heyeso/color-range'
 import { Bounds } from '../model/bounds'
 import { IndicatorData } from '../model/indicators/indicator.data'
 
+
+const DATA_SRC_BERLIN = 'assets/geojson/pgr_berlin_2021.json'
+const DATA_SRC_BRB = 'assets/geojson/gem_brb_2023.json'
+
 @Injectable({
   providedIn: 'root',
 })
@@ -57,7 +61,8 @@ export class DataService {
 
             features.forEach((feature) => {
               let value = 0
-              const name = feature.get('PLR_NAME')
+              let kennziffer = feature.get('broker Dow')
+              const name = feature.get('PROGNOSERA')
               data
                 .filter((x) => name.includes(x.Name))
                 .map((y) => value += y['Fortzüge insgesamt'])
@@ -69,7 +74,7 @@ export class DataService {
               }))
 
               //create Table source
-              const tableFeature = new TableElem(feature.get('PGR_ID'), name, value)
+              const tableFeature = new TableElem(kennziffer, name, value)
               tableSource.push(tableFeature)
             })
             const vectorLayer = new VectorLayer({ source: vector })
@@ -95,7 +100,7 @@ export class DataService {
 
   private getLayerBerlin(): Observable<VectorLayer<any>> {
     if (this.layerBerlin === undefined) {
-      return this.httpClient.get('assets/geojson/lor_berlin_2021.json')
+      return this.httpClient.get(DATA_SRC_BERLIN)
         .pipe(
           map((layer) => {
             const vectorSource = new VectorSource({
@@ -112,7 +117,7 @@ export class DataService {
 
   private getLayerBrB(): Observable<VectorLayer<any>> {
     if (this.layerBrb === undefined) {
-      return this.httpClient.get('assets/geojson/gem_brb_2023.json')
+      return this.httpClient.get(DATA_SRC_BRB)
         .pipe(
           map((layer) => {
             const vectorSource = new VectorSource({

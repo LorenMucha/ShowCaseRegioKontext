@@ -1,12 +1,12 @@
 export interface TableElem {
-    ags: number
+    id: number
     name: string
     value: number
 }
 
 export class TableElem implements TableElem {
-    constructor(ags: number, name: string, value: number) {
-        this.ags = ags
+    constructor(id: number, name: string, value: number) {
+        this.id = id
         this.name = name
         this.value = value
     }
