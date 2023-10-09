@@ -27,6 +27,7 @@ export class TimesliderComponent implements OnInit, OnDestroy {
 
   changeYear(evt: Event) {
     const year = Number((evt.target as HTMLInputElement).value)
+    console.log("Slider", year)
     this.yearEvent.emit(year)
   }
 

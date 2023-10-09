@@ -27,7 +27,7 @@ export class DataService {
   private layerBerlin: VectorLayer<any> | undefined
   private tableFeatures: BehaviorSubject<TableElem[]> = new BehaviorSubject<TableElem[]>([])
   private selectedIndicator: BehaviorSubject<IndicatorData> = new BehaviorSubject<IndicatorData>(new ZuUndFortzuege())
-  private selectedYear: number | undefined
+  private selectedYear: BehaviorSubject<number> = new BehaviorSubject<number>(0)
   public mapLayerBerlin: MapLayer | undefined
   public mapLayerBrandenburg: MapLayer | undefined
   private receivedYears: BehaviorSubject<Set<number>> = new BehaviorSubject<Set<number>>(new Set())
@@ -45,33 +45,33 @@ export class DataService {
     return this.selectedIndicator
   }
 
-  getSelectedYear(): number { return this.selectedYear! }
+  getSelectedYear(): BehaviorSubject<number> { return this.selectedYear }
 
   getMapLayerForBounds(indicator: IndicatorData, bounds: Bounds, year: number): Observable<MapLayer> {
     const tableSource: TableElem[] = []
     this.selectedIndicator.next(indicator)
-    this.selectedYear = year
+    this.selectedYear.next(year)
     if (bounds == Bounds.Berlin) {
       return forkJoin([this.getLayerBerlin(), this.getIndicatorData(indicator, year)])
         .pipe(
-          tap(([layer, data]) => {
+          tap(([, data]) => {
             data.forEach((data) => {
               //create Table source
-              const tableFeature = new TableElem(data.Kennziffer, data.Name, data['Fortzüge insgesamt'])
+              const tableFeature = new TableElem(data.Kennziffer, data.Name, data['Außenwanderungen Zuzüge insgesamt'])
               tableSource.push(tableFeature)
             })
           }),
           mergeMap(([layer, data]) => {
-            var vector = new VectorSource()
-            var source = layer.getSource()
-            var features = source.getFeatures() as Array<Feature>
+            let vector = new VectorSource()
+            let source = layer.getSource()
+            let features = source.getFeatures() as Array<Feature>
 
             features.forEach((feature) => {
               let value = 0
               const name = feature.get('PROGNOSERA')
               data
                 .filter((x) => name.includes(x.Name))
-                .map((y) => value += y['Fortzüge insgesamt'])
+                .forEach((y) => value += y['Außenwanderungen Zuzüge insgesamt'])
 
               vector.addFeature(new Feature({
                 value: value,
@@ -79,10 +79,13 @@ export class DataService {
                 name: name
               }))
             })
+
+            console.log("Data Service", year)
+
             const vectorLayer = new VectorLayer({ source: vector })
             const max = Math.max(...tableSource.map((item) => item.value))
             const min = Math.min(...tableSource.map((item) => item.value))
-            const mapLayer = new MapLayer(1, vectorLayer, 'Berlin', indicator, min, max, Bounds.Berlin)
+            const mapLayer = new MapLayer(1, vectorLayer, 'Planungsregion', indicator, min, max, Bounds.Berlin)
             this.mapLayerBerlin = mapLayer
             this.tableFeatures.next(tableSource)
             return of(this.mapLayerBerlin)
@@ -144,7 +147,7 @@ export class DataService {
         }),
         filter((x) => !x.Kennziffer === false && x.Jahr == year),
         toArray(),
-        tap(() => this.receivedYears.next(years))
+        tap(() => this.receivedYears.next(years)),
       )
   }
 
@@ -152,9 +155,9 @@ export class DataService {
     return layer.pipe(
       mergeMap((item) => {
         const test_colors = [[255, 50, 0], [124, 252, 0]];
-        var vector = new VectorSource()
-        var source = item.layer.getSource()
-        var features = source.getFeatures() as Array<Feature>
+        const vector = new VectorSource()
+        const source = item.layer.getSource()
+        const features = source.getFeatures() as Array<Feature>
 
         features.forEach((layer) => {
           const value = layer.get('value')

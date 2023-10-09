@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { map, takeUntil, toArray } from 'rxjs/operators';
+import { Bounds } from 'src/app/model/bounds';
 import { TableElem } from 'src/app/model/table-elem';
 import { DataService } from 'src/app/services/data.service';
 
@@ -12,7 +13,7 @@ import { DataService } from 'src/app/services/data.service';
   styleUrls: ['./table.component.css']
 })
 export class TableComponent implements AfterViewInit, OnDestroy {
-
+  spatialName: string | undefined
   tableSource = new MatTableDataSource<TableElem>();
   private tableSourceStream$: BehaviorSubject<TableElem[]> | undefined
   displayedColumns: string[] = ['id', 'name', 'value'];
@@ -38,6 +39,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
       var tableElementsArr: TableElem[] = []
       elements.forEach((elem) => tableElementsArr.push(elem))
       this.tableSource.data = tableElementsArr
+      this.spatialName = this.dataService.mapLayerBerlin?.name
     })
   }
 

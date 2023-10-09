@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, OnDestroy } from '@angular/core';
-import { BehaviorSubject, filter, skip, takeUntil } from 'rxjs';
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { BehaviorSubject, filter } from 'rxjs';
 import { IndicatorData } from 'src/app/model/indicators/indicator.data';
 import { DataService } from 'src/app/services/data.service';
 
@@ -11,10 +11,10 @@ import { DataService } from 'src/app/services/data.service';
 export class LegendeComponent implements AfterViewInit, OnDestroy {
 
   indicator: IndicatorData | undefined
-  year: number | undefined
+  yearStream$: BehaviorSubject<number> | undefined
   indicatorStream$: BehaviorSubject<IndicatorData> | undefined
 
-  constructor(private dataService: DataService) { }
+  constructor(private dataService: DataService, private cdRef: ChangeDetectorRef   ) { }
 
   ngAfterViewInit(): void {
     this.indicatorStream$ = this.dataService.getSelectedIndicator()
@@ -24,8 +24,9 @@ export class LegendeComponent implements AfterViewInit, OnDestroy {
       )
       .subscribe((data) => {
         this.indicator = data
-        this.year = this.dataService.getSelectedYear()
+        this.yearStream$ = this.dataService.getSelectedYear()
       })
+      this.cdRef.detectChanges()
   }
 
   ngOnDestroy(): void {

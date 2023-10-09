@@ -1,5 +1,4 @@
 import VectorLayer from "ol/layer/Vector"
-import { IndicatorValues } from "./indicators/indicator.values"
 import { Bounds } from "./bounds"
 import { IndicatorData } from "./indicators/indicator.data"
 
