@@ -1,6 +1,7 @@
 import VectorLayer from "ol/layer/Vector"
 import { Bounds } from "./bounds"
 import { IndicatorData } from "./indicators/indicator.data"
+import { ColorRange } from "@heyeso/color-range"
 
 export interface MapLayer {
     id: number
@@ -13,7 +14,9 @@ export class MapLayer implements MapLayer {
     min: number
     max: number
     bounds: Bounds
-    constructor(id?: number, layer?: VectorLayer<any>, name?: string, indicator?: IndicatorData, min?: number, max?: number, bounds?: Bounds) {
+    colorMap: ColorRange
+    //FIXME: refactor to Builder
+    constructor(id?: number, layer?: VectorLayer<any>, name?: string, indicator?: IndicatorData, min?: number, max?: number, bounds?: Bounds, colorMap?: ColorRange) {
         this.id = id!
         this.layer = layer!
         this.name = name!
@@ -21,6 +24,11 @@ export class MapLayer implements MapLayer {
         this.min = min!
         this.max = max!
         this.bounds = bounds!
+        this.colorMap = colorMap!
+    }
+
+    setColorMap(map: ColorRange) {
+        this.colorMap = map
     }
 
     setBounds(bounds: Bounds) {

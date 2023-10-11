@@ -7,7 +7,7 @@ import Style from 'ol/style/Style'
 import GeoJSON from 'ol/format/GeoJSON'
 import { HttpClient } from '@angular/common/http'
 import { MapLayer } from '../model/map.layer'
-import { Observable, map, forkJoin, of, mergeMap, mergeAll, toArray, filter, tap, BehaviorSubject } from 'rxjs'
+import { Observable, map, forkJoin, of, mergeMap, mergeAll, toArray, filter, tap, BehaviorSubject, switchMap } from 'rxjs'
 import { Feature } from 'ol'
 import { ZuUndFortzuege, ZuUndFortzuegeData } from '../model/indicators/zu.fortzuege'
 import { TableElem } from '../model/table-elem'
@@ -18,6 +18,7 @@ import { IndicatorData } from '../model/indicators/indicator.data'
 
 const DATA_SRC_BERLIN = 'assets/geojson/pgr_berlin_2021.json'
 const DATA_SRC_BRB = 'assets/geojson/gem_brb_2023.json'
+const MAP_COLORS = [[255, 50, 0], [124, 252, 0]];
 
 @Injectable({
   providedIn: 'root',
@@ -29,9 +30,14 @@ export class DataService {
   private selectedIndicator: BehaviorSubject<IndicatorData> = new BehaviorSubject<IndicatorData>(new ZuUndFortzuege())
   private selectedYear: BehaviorSubject<number> = new BehaviorSubject<number>(0)
   public mapLayerBerlin: MapLayer | undefined
+  private layerBerlinStream$: BehaviorSubject<MapLayer> = new BehaviorSubject(new MapLayer())
   public mapLayerBrandenburg: MapLayer | undefined
   private receivedYears: BehaviorSubject<Set<number>> = new BehaviorSubject<Set<number>>(new Set())
   constructor(private httpClient: HttpClient) { }
+
+  getMapLayerBerlin(): BehaviorSubject<MapLayer> {
+    return this.layerBerlinStream$
+  }
 
   getTableFeatures(): BehaviorSubject<TableElem[]> {
     return this.tableFeatures
@@ -80,14 +86,14 @@ export class DataService {
               }))
             })
 
-            console.log("Data Service", year)
-
             const vectorLayer = new VectorLayer({ source: vector })
             const max = Math.max(...tableSource.map((item) => item.value))
             const min = Math.min(...tableSource.map((item) => item.value))
-            const mapLayer = new MapLayer(1, vectorLayer, 'Planungsregion', indicator, min, max, Bounds.Berlin)
+            const temperatureMap = colorRange(MAP_COLORS, [min, max])
+            const mapLayer = new MapLayer(1, vectorLayer, 'Planungsregion', indicator, min, max, Bounds.Berlin, temperatureMap)
             this.mapLayerBerlin = mapLayer
             this.tableFeatures.next(tableSource)
+            this.layerBerlinStream$.next(this.mapLayerBerlin)
             return of(this.mapLayerBerlin)
           }),
           this.styleMapLayer
@@ -153,15 +159,13 @@ export class DataService {
 
   private styleMapLayer(layer: Observable<MapLayer>): Observable<MapLayer> {
     return layer.pipe(
-      mergeMap((item) => {
-        const test_colors = [[255, 50, 0], [124, 252, 0]];
+      map((item) => {
         const vector = new VectorSource()
         const source = item.layer.getSource()
         const features = source.getFeatures() as Array<Feature>
-
+        const temperatureMap = item.colorMap
         features.forEach((layer) => {
           const value = layer.get('value')
-          const temperatureMap = colorRange(test_colors, [item.min, item.max])
           const color = temperatureMap.getColor(value)
           const style = new Style({
             fill: new Fill({
@@ -175,8 +179,9 @@ export class DataService {
           layer.set('style', style)
           vector.addFeature(layer)
         })
+        item.setColorMap(temperatureMap)
         item.setLayer(new VectorLayer({ source: vector }))
-        return of(item)
+        return item
       })
     )
   }
