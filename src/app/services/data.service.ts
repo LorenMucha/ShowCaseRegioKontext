@@ -35,7 +35,7 @@ export class DataService {
   private receivedYears: BehaviorSubject<Set<number>> = new BehaviorSubject<Set<number>>(new Set())
   constructor(private httpClient: HttpClient) { }
 
-  getMapLayerBerlin(): BehaviorSubject<MapLayer> {
+  getMapLayerBerlinStream(): BehaviorSubject<MapLayer> {
     return this.layerBerlinStream$
   }
 

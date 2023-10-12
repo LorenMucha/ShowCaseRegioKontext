@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnDestroy, Output } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { map, takeUntil, toArray } from 'rxjs/operators';
@@ -16,6 +16,8 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   tableSource = new MatTableDataSource<TableElem>();
   private tableSourceStream$: BehaviorSubject<TableElem[]> | undefined
   displayedColumns: string[] = ['id', 'name', 'value'];
+  @Output() tableHoverEvent = new EventEmitter<string>();
+  @Output() tableHoverResetEvent = new EventEmitter<string>();
   constructor(private dataService: DataService) { }
 
   sortByName(a: TableElem, b: TableElem) {
@@ -44,5 +46,13 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.tableSourceStream$?.complete()
+  }
+
+  hoverLayer(event: TableElem) {
+    this.tableHoverEvent.emit(event.name)
+  }
+
+  resetHover(event: TableElem) {
+    this.tableHoverResetEvent.emit(event.name)
   }
 }

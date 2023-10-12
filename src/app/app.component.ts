@@ -46,6 +46,12 @@ export class AppComponent {
   }
 
   changeTimeslider(year: number) {
-   this.map?.addMapLayer(undefined, year)
+    this.map?.addMapLayer(undefined, year)
+  }
+  highlightMapLayer(name: string) {
+    this.map?.selectFeatureByName(name)
+  }
+  resetHighlightMapLayer(name: string) {
+    this.map?.resetHighlightByName(name)
   }
 }

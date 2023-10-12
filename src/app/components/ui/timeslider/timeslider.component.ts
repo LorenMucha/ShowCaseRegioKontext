@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 
 @Component({
@@ -27,7 +27,6 @@ export class TimesliderComponent implements OnInit, OnDestroy {
 
   changeYear(evt: Event) {
     const year = Number((evt.target as HTMLInputElement).value)
-    console.log("Slider", year)
     this.yearEvent.emit(year)
   }
 

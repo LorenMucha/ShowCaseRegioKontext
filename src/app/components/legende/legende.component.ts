@@ -1,14 +1,15 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { BehaviorSubject, filter } from 'rxjs';
+import { BehaviorSubject, filter, forkJoin, merge, withLatestFrom, zip } from 'rxjs';
 import { IndicatorData } from 'src/app/model/indicators/indicator.data';
+import { MapLayer } from 'src/app/model/map.layer';
 import { DataService } from 'src/app/services/data.service';
 
 
-class LegendValue{
+class LegendValue {
   min: number
   max: number
   color: string
-  constructor(min: number, max: number, color:string){
+  constructor(min: number, max: number, color: string) {
     this.min = min
     this.max = max
     this.color = color
@@ -26,35 +27,21 @@ export class LegendeComponent implements AfterViewInit, OnDestroy {
   yearStream$: BehaviorSubject<number> | undefined
   indicatorStream$: BehaviorSubject<IndicatorData> | undefined
   legendItems: Array<LegendValue> = []
-
+  private mapLayerStream$: BehaviorSubject<MapLayer> | undefined
 
   constructor(private dataService: DataService, private cdRef: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
     this.indicatorStream$ = this.dataService.getSelectedIndicator()
-    this.indicatorStream$
+    this.mapLayerStream$ = this.dataService.getMapLayerBerlinStream()
+    this.mapLayerStream$
       .pipe(
-        filter((data) => !!data)
-      )
-      .subscribe((data) => {
-        this.indicator = data
+        filter((indicator) => !!indicator),
+        withLatestFrom(this.indicatorStream$)
+      ).subscribe(([map, indicator]) => {
+        this.indicator = indicator
         this.yearStream$ = this.dataService.getSelectedYear()
-      })
-    //FIXME: eigene Methode
-    this.dataService.getMapLayerBerlin()
-      .pipe(
-        filter((layer) => !!layer.colorMap)
-      )
-      .subscribe((layer) => {
-        const min = layer.min
-        const max = layer.max
-        const devider = max / 5
-        const colorMap = layer.colorMap
-        this.legendItems = []
-        for (let x = min; x <= max; x += devider) {
-          this.legendItems.push(new LegendValue(Math.round(x), Math.round(x+devider), colorMap.getColor(x).toString))
-        }
-        console.log(this.legendItems)
+        this.initLegend(map)
       })
     this.cdRef.detectChanges()
 
@@ -62,5 +49,16 @@ export class LegendeComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.indicatorStream$?.complete()
+  }
+
+  initLegend(layer: MapLayer): void {
+    const min = layer.min
+    const max = layer.max
+    const devider = max / 5
+    const colorMap = layer.colorMap
+    this.legendItems = []
+    for (let x = min; x <= max; x += devider) {
+      this.legendItems.push(new LegendValue(Math.round(x), Math.round(x + devider), colorMap.getColor(x).toString))
+    }
   }
 }

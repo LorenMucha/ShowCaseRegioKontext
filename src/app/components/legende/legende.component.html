@@ -5,10 +5,10 @@
             <div>Bedeutung: {{indicator?.description}}</div>
         </div>
         <div class="float-right">
-            <div *ngFor="let item of legendItems" class="flex flex-row space-x-1">
-                <div [style.background]="item.color" class="w-5 h-5"></div>
-                <div>{{item.min}}-{{item.max}}</div>
-            </div>
+                <ng-container class="inline-block space-x-1" *ngFor="let item of legendItems">
+                    <div [style.background]="item.color" class="w-5 h-5 float-left mr-3"></div>
+                    <div>{{item.min}}-{{item.max}}</div>
+                </ng-container>
         </div>
     </div>
 </div>

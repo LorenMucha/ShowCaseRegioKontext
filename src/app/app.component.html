@@ -30,7 +30,7 @@
                   class="ml-2">Brandenburg</span>
               </div>
             </div>
-            <app-table></app-table>
+            <app-table (tableHoverEvent)="highlightMapLayer($event)" (tableHoverResetEvent)="resetHighlightMapLayer($event)"></app-table>
           </div>
         </div>
       </div>
