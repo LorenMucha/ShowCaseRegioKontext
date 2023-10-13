@@ -1,14 +1,15 @@
 <div class="border border-green-900 p-5 mx-5 mb-5 h-full">
     <div class="grid grid-cols-6 gap-2 w-full">
         <div class="col-span-5">
-            <span class="text-xl text-green-900">Indikator: {{indicator?.title}} - {{yearStream$ | async}}</span>
+            <span class="text-xl text-green-900">Indikator: {{indicator?.title}} für das Jahr {{yearStream$ |
+                async}}</span>
             <div>Bedeutung: {{indicator?.description}}</div>
         </div>
         <div class="float-right">
-                <ng-container class="inline-block space-x-1" *ngFor="let item of legendItems">
+            <ng-container class="inline-block space-x-1" *ngFor="let item of legendItems">
                     <div [style.background]="item.color" class="w-5 h-5 float-left mr-3"></div>
                     <div>{{item.min}}-{{item.max}}</div>
-                </ng-container>
+            </ng-container>
         </div>
     </div>
 </div>

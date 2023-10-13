@@ -41,5 +41,5 @@ export interface ZuUndFortzuegeData {
 export class ZuUndFortzuege implements IndicatorData {
     url: string = 'zu_fortzuege.json'
     description: string = 'Proident cillum sit duis aliquip ullamco laboris nostrud reprehenderit labore.'
-    title: string = 'Zu und Fortzüge'
+    title: string = 'Außenwanderungen Zuzüge insgesamt'
 }

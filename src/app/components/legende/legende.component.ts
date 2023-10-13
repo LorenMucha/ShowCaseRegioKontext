@@ -27,6 +27,7 @@ export class LegendeComponent implements AfterViewInit, OnDestroy {
   yearStream$: BehaviorSubject<number> | undefined
   indicatorStream$: BehaviorSubject<IndicatorData> | undefined
   legendItems: Array<LegendValue> = []
+  marked: boolean = false;
   private mapLayerStream$: BehaviorSubject<MapLayer> | undefined
 
   constructor(private dataService: DataService, private cdRef: ChangeDetectorRef) { }
@@ -49,6 +50,10 @@ export class LegendeComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.indicatorStream$?.complete()
+  }
+
+  highlightBounds(value: number): void{
+
   }
 
   initLegend(layer: MapLayer): void {
