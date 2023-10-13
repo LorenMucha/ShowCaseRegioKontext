@@ -16,8 +16,8 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   tableSource = new MatTableDataSource<TableElem>();
   private tableSourceStream$: BehaviorSubject<TableElem[]> | undefined
   displayedColumns: string[] = ['id', 'name', 'value'];
-  @Output() tableHoverEvent = new EventEmitter<string>();
-  @Output() tableHoverResetEvent = new EventEmitter<string>();
+  @Output() tableHoverEvent = new EventEmitter<TableElem>();
+  @Output() tableHoverResetEvent = new EventEmitter<TableElem>();
   constructor(private dataService: DataService) { }
 
   sortByName(a: TableElem, b: TableElem) {
@@ -49,10 +49,10 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   }
 
   hoverLayer(event: TableElem) {
-    this.tableHoverEvent.emit(event.name)
+    this.tableHoverEvent.emit(event)
   }
 
   resetHover(event: TableElem) {
-    this.tableHoverResetEvent.emit(event.name)
+    this.tableHoverResetEvent.emit(event)
   }
 }

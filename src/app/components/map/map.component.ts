@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, OnInit } from '@angular/core'
 import OlMap from 'ol/Map'
 import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
-import { fromLonLat, toLonLat } from 'ol/proj.js'
+import { fromLonLat } from 'ol/proj.js'
 import Select from 'ol/interaction/Select'
 import OSM from 'ol/source/OSM';
 import { DataService } from 'src/app/services/data.service'
@@ -15,7 +15,7 @@ import { Bounds } from 'src/app/model/bounds'
 import { MapLayer } from 'src/app/model/map.layer'
 import { IndicatorData } from 'src/app/model/indicators/indicator.data'
 import { ZuUndFortzuege } from 'src/app/model/indicators/zu.fortzuege'
-import VectorLayer from 'ol/layer/Vector'
+import { TableElem } from 'src/app/model/table-elem';
 import { Geometry } from 'ol/geom'
 
 
@@ -90,14 +90,14 @@ export class MapComponent implements OnInit, AfterViewInit {
     })
   }
 
-  selectFeatureByName(name: string): void {
+  selectFeatureByTableElem(elem: TableElem): void {
     this.selectedLayer.forEach((value: MapLayer, key: Bounds) => {
       //FIXME: diese Funktion kann seperiert werden
       const vectorSource = value.layer.getSource()
       const features = vectorSource.getFeatures() as Array<Feature>
-      const feature = features.filter((item) => name.includes(item.get('name')))
+      const feature = features.filter((item) => elem.name.includes(item.get('name')))[0]
       if (feature) {
-        this.highlightLayer(feature[0])
+        this.highlightLayer(feature)
       }
     });
   }
@@ -117,12 +117,12 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.popUpIsVisible = false
   }
 
-  resetHighlightByName(name: string) {
+  resetHighlightByTableElem(elem: TableElem) {
     this.selectedLayer.forEach((value: MapLayer, key: Bounds) => {
       //FIXME: diese Funktion kann seperiert werden
       const vectorSource = value.layer.getSource()
       const features = vectorSource.getFeatures() as Array<Feature>
-      const feature = features.filter((item) => name.includes(item.get('name')))[0]
+      const feature = features.filter((item) => elem.name.includes(item.get('name')))[0]
       if (feature) {
         try {
           feature.setStyle(new Style({

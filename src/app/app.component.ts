@@ -3,6 +3,7 @@ import { TabElem } from './model/tabs-elem';
 import { MapComponent } from './components/map/map.component';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Bounds } from './model/bounds';
+import { TableElem } from './model/table-elem';
 
 @Component({
   selector: 'app-root',
@@ -48,10 +49,10 @@ export class AppComponent {
   changeTimeslider(year: number) {
     this.map?.addMapLayer(undefined, year)
   }
-  highlightMapLayer(name: string) {
-    this.map?.selectFeatureByName(name)
+  highlightMapLayer(elem: TableElem) {
+    this.map?.selectFeatureByTableElem(elem)
   }
-  resetHighlightMapLayer(name: string) {
-    this.map?.resetHighlightByName(name)
+  resetHighlightMapLayer(elem: TableElem) {
+    this.map?.resetHighlightByTableElem(elem)
   }
 }

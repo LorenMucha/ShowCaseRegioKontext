@@ -82,7 +82,8 @@ export class DataService {
               vector.addFeature(new Feature({
                 value: value,
                 geometry: feature.getGeometry(),
-                name: name
+                name: name,
+                id: feature.get('AGS')
               }))
             })
 
