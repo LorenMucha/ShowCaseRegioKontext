@@ -95,7 +95,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       //FIXME: diese Funktion kann seperiert werden
       const vectorSource = value.layer.getSource()
       const features = vectorSource.getFeatures() as Array<Feature>
-      const feature = features.filter((item) => item.get('name') === name)
+      const feature = features.filter((item) => name.includes(item.get('name')))
       if (feature) {
         this.highlightLayer(feature[0])
       }
@@ -122,8 +122,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       //FIXME: diese Funktion kann seperiert werden
       const vectorSource = value.layer.getSource()
       const features = vectorSource.getFeatures() as Array<Feature>
-      const feature = features.filter((item) => item.get('name') === name)[0]
-      console.log('reset hightlight for', name)
+      const feature = features.filter((item) => name.includes(item.get('name')))[0]
       if (feature) {
         try {
           feature.setStyle(new Style({
