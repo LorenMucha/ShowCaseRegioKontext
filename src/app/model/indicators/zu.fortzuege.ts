@@ -1,5 +1,6 @@
-import { IndicatorData } from "./indicator.data";
+import { IndicatorImpl } from "./indicator.data";
 
+//generated
 export interface ZuUndFortzuegeData {
     "Jahr": number,
     "Kennziffer": number,
@@ -38,7 +39,7 @@ export interface ZuUndFortzuegeData {
     "12073008 Angermünde Fort": number
 }
 
-export class ZuUndFortzuege implements IndicatorData {
+export class ZuUndFortzuege implements IndicatorImpl {
     url: string = 'zu_fortzuege.json'
     description: string = 'Proident cillum sit duis aliquip ullamco laboris nostrud reprehenderit labore.'
     title: string = 'Außenwanderungen Zuzüge insgesamt'

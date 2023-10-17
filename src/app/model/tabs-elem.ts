@@ -1,4 +1,4 @@
-export interface TabElem{
+export interface TabElem {
     title: string
     active: boolean
 }

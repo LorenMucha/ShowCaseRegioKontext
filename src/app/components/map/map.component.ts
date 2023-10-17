@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core'
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core'
 import OlMap from 'ol/Map'
 import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
@@ -13,8 +13,7 @@ import Stroke from 'ol/style/Stroke'
 import { Feature } from 'ol'
 import { Bounds } from 'src/app/model/bounds'
 import { MapLayer } from 'src/app/model/map.layer'
-import { IndicatorData } from 'src/app/model/indicators/indicator.data'
-import { ZuUndFortzuege } from 'src/app/model/indicators/zu.fortzuege'
+import { Indicator } from 'src/app/model/indicators/indicator.data'
 import { TableElem } from 'src/app/model/table-elem';
 import { Geometry } from 'ol/geom'
 
@@ -30,7 +29,8 @@ const mapCenter = fromLonLat(berlinLonLat)
 })
 export class MapComponent implements OnInit, AfterViewInit {
   private select = new Select();
-  private selectedIndicator: IndicatorData = new ZuUndFortzuege()
+  //FIXME: auf indicator class umschreiben
+  @Input({ required: true }) selectedIndicator!: Indicator
   private selectedLayer: Map<Bounds, MapLayer> = new Map<Bounds, MapLayer>()
   private selectedYear: number = 2021
   private selectedBounds: Bounds = Bounds.Berlin
@@ -45,7 +45,6 @@ export class MapComponent implements OnInit, AfterViewInit {
   constructor(private mapService: DataService) { }
 
   ngOnInit(): void {
-
     this.map = new OlMap({
       view: new View({
         center: mapCenter,
@@ -65,11 +64,12 @@ export class MapComponent implements OnInit, AfterViewInit {
     })
   }
 
-  addMapLayer(bounds?: Bounds, year?: number): void {
+  addMapLayer(bounds?: Bounds, year?: number, indicator?: Indicator): void {
     this.selectedBounds = bounds ?? this.selectedBounds;
     this.selectedYear = year ?? this.selectedYear;
+    this.selectedIndicator = indicator ?? this.selectedIndicator
 
-    this.mapService.getMapLayerForBounds(this.selectedIndicator, this.selectedBounds, this.selectedYear).subscribe((layer) => {
+    this.mapService.getMapLayerForBounds(this.selectedIndicator!, this.selectedBounds, this.selectedYear).subscribe((layer) => {
       const vector = layer.layer
       if (this.selectedLayer.has(this.selectedBounds)) {
         const tempLayer: MapLayer = this.selectedLayer.get(this.selectedBounds)!;

@@ -1,19 +1,19 @@
+import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
+import { colorRange } from '@heyeso/color-range'
+import { Feature } from 'ol'
+import GeoJSON from 'ol/format/GeoJSON'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
 import Fill from 'ol/style/Fill'
 import Stroke from 'ol/style/Stroke'
 import Style from 'ol/style/Style'
-import GeoJSON from 'ol/format/GeoJSON'
-import { HttpClient } from '@angular/common/http'
-import { MapLayer } from '../model/map.layer'
-import { Observable, map, forkJoin, of, mergeMap, mergeAll, toArray, filter, tap, BehaviorSubject, switchMap } from 'rxjs'
-import { Feature } from 'ol'
-import { ZuUndFortzuege, ZuUndFortzuegeData } from '../model/indicators/zu.fortzuege'
-import { TableElem } from '../model/table-elem'
-import { colorRange } from '@heyeso/color-range'
+import { BehaviorSubject, Observable, filter, forkJoin, map, mergeAll, mergeMap, of, tap, toArray } from 'rxjs'
 import { Bounds } from '../model/bounds'
-import { IndicatorData } from '../model/indicators/indicator.data'
+import { Indicator } from '../model/indicators/indicator.data'
+import { ZuUndFortzuege, ZuUndFortzuegeData } from '../model/indicators/zu.fortzuege'
+import { MapLayer } from '../model/map.layer'
+import { TableElem } from '../model/table-elem'
 
 
 const DATA_SRC_BERLIN = 'assets/geojson/pgr_berlin_2021.json'
@@ -27,7 +27,7 @@ export class DataService {
   private layerBrb: VectorLayer<any> | undefined
   private layerBerlin: VectorLayer<any> | undefined
   private tableFeatures: BehaviorSubject<TableElem[]> = new BehaviorSubject<TableElem[]>([])
-  private selectedIndicator: BehaviorSubject<IndicatorData> = new BehaviorSubject<IndicatorData>(new ZuUndFortzuege())
+  private selectedIndicator: BehaviorSubject<Indicator> = new BehaviorSubject<Indicator>(new ZuUndFortzuege())
   private selectedYear: BehaviorSubject<number> = new BehaviorSubject<number>(0)
   public mapLayerBerlin: MapLayer | undefined
   private layerBerlinStream$: BehaviorSubject<MapLayer> = new BehaviorSubject(new MapLayer())
@@ -47,16 +47,17 @@ export class DataService {
     return this.receivedYears
   }
 
-  getSelectedIndicator(): BehaviorSubject<IndicatorData> {
+  getSelectedIndicator(): BehaviorSubject<Indicator> {
     return this.selectedIndicator
   }
 
   getSelectedYear(): BehaviorSubject<number> { return this.selectedYear }
 
-  getMapLayerForBounds(indicator: IndicatorData, bounds: Bounds, year: number): Observable<MapLayer> {
+  getMapLayerForBounds(indicator: Indicator, bounds: Bounds, year: number): Observable<MapLayer> {
     const tableSource: TableElem[] = []
     this.selectedIndicator.next(indicator)
     this.selectedYear.next(year)
+    
     if (bounds == Bounds.Berlin) {
       return forkJoin([this.getLayerBerlin(), this.getIndicatorData(indicator, year)])
         .pipe(
@@ -144,7 +145,7 @@ export class DataService {
     }
   }
 
-  private getIndicatorData(indicator: IndicatorData, year: number) {
+  private getIndicatorData(indicator: Indicator, year: number) {
     const years = new Set<number>()
     return this.httpClient.get<ZuUndFortzuegeData[]>(`assets/data/${indicator.url}`)
       .pipe(
