@@ -3,7 +3,7 @@
         <div class="col-span-5">
             <span class="text-xl text-green-900">Indikator: {{indicator?.title}} für das Jahr {{yearStream$ |
                 async}}</span>
-            <div>Bedeutung: {{indicator?.description}}</div>
+            <div>{{indicator?.description}}</div>
         </div>
         <div class="float-right">
             <ng-container class="inline-block space-x-1" *ngFor="let item of legendItems">
