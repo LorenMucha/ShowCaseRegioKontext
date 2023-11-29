@@ -1,13 +1,12 @@
 import { IndicatorImpl } from "./model/indicators/indicator.data";
+import { ZuUndFortzuege } from "./model/indicators/zu.fortzuege";
 import { TabElem } from "./model/tabs-elem";
 
 export const MENU: Map<TabElem, Array<IndicatorImpl>> = new Map<TabElem, Array<IndicatorImpl>>([
-    [{ title: "Marktdaten", active: true },
-    [new IndicatorImpl('Culpa culpa est duis ipsum ut eu sint adipisicing id eiusmod elit laborum aliqua nulla.Sunt in ullamco commodo duis minim exercitation magna tempor.Commodo id duis laborum mollit quis ut irure est.',
-        'zu_fortzuege.json',
-        'Zu und Fortzüge'),
+    [{ title: "Nachfrage", active: true },
+    [new ZuUndFortzuege(),
     new IndicatorImpl('', '', 'Auspendler'),
     new IndicatorImpl('', '', 'Einpendler')]],
-    [{ title: "Mieten", active: false },
+    [{ title: "Marktdaten", active: false },
     [new IndicatorImpl('', '', 'Anzahl Angebote'), new IndicatorImpl('', '', 'arith. Mittel €/m²')]]
 ]);
