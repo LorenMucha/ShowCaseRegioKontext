@@ -1,5 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { BehaviorSubject, filter, forkJoin, merge, withLatestFrom, zip } from 'rxjs';
+import { RANGES } from 'src/app/constants';
 import { IndicatorImpl } from 'src/app/model/indicators/indicator.data';
 import { MapLayer } from 'src/app/model/map.layer';
 import { DataService } from 'src/app/services/data.service';
@@ -59,7 +60,7 @@ export class LegendeComponent implements AfterViewInit, OnDestroy {
   initLegend(layer: MapLayer): void {
     const min = layer.min
     const max = layer.max
-    const devider = max / 5
+    const devider = max / RANGES;
     const colorMap = layer.colorMap
     this.legendItems = []
     for (let x = min; x <= max; x += devider) {

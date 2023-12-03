@@ -10,3 +10,5 @@ export const MENU: Map<TabElem, Array<IndicatorImpl>> = new Map<TabElem, Array<I
     [{ title: "Marktdaten", active: false },
     [new IndicatorImpl('', '', 'Anzahl Angebote'), new IndicatorImpl('', '', 'arith. Mittel €/m²')]]
 ]);
+
+export const RANGES = 5;

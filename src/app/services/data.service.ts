@@ -14,11 +14,13 @@ import { Indicator } from '../model/indicators/indicator.data'
 import { ZuUndFortzuege, ZuUndFortzuegeData } from '../model/indicators/zu.fortzuege'
 import { MapLayer } from '../model/map.layer'
 import { TableElem } from '../model/table-elem'
+import { RANGES } from '../constants'
 
 
 const DATA_SRC_BERLIN = 'assets/geojson/pgr_berlin_2021.json'
 const DATA_SRC_BRB = 'assets/geojson/gem_brb_2023.json'
-const MAP_COLORS = [[255, 50, 0], [124, 252, 0]];
+const MAP_COLORS = [[132, 22, 54], [173, 48, 67], [216, 76, 89], [233, 105, 90], [242, 138, 72],
+[250, 180, 0], [255, 217, 106], [204, 183, 154]];
 
 @Injectable({
   providedIn: 'root',
@@ -57,7 +59,7 @@ export class DataService {
     const tableSource: TableElem[] = []
     this.selectedIndicator.next(indicator)
     this.selectedYear.next(year)
-    
+
     if (bounds == Bounds.Berlin) {
       return forkJoin([this.getLayerBerlin(), this.getIndicatorData(indicator, year)])
         .pipe(
@@ -91,7 +93,7 @@ export class DataService {
             const vectorLayer = new VectorLayer({ source: vector })
             const max = Math.max(...tableSource.map((item) => item.value))
             const min = Math.min(...tableSource.map((item) => item.value))
-            const temperatureMap = colorRange(MAP_COLORS, [min, max])
+            const temperatureMap = colorRange(MAP_COLORS, this.buildRanges(tableSource.map((item) => item.value)))
             const mapLayer = new MapLayer(1, vectorLayer, 'Planungsregion', indicator, min, max, Bounds.Berlin, temperatureMap)
             this.mapLayerBerlin = mapLayer
             this.tableFeatures.next(tableSource)
@@ -186,5 +188,24 @@ export class DataService {
         return item
       })
     )
+  }
+
+  private buildRanges(numbers: Array<number>): Array<number> {
+    const min = Math.min.apply(null, numbers);
+    const max = Math.max.apply(null, numbers);
+    const spread = max - min;
+    const step = spread / RANGES;
+    const ranges = [];
+
+    for (let i = 0; i < RANGES; i++) {
+      for (let n = 0; n < numbers.length - 1; n++) {
+        if (numbers[n] >= step * i + min && numbers[n] < step * (i + 1) + min) {
+          if (!ranges[i]) ranges[i] = 0;
+          ranges[i]++;
+        }
+      }
+    }
+
+    return ranges;
   }
 }
