@@ -1,6 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { BehaviorSubject, filter, forkJoin, merge, withLatestFrom, zip } from 'rxjs';
-import { RANGES } from 'src/app/constants';
 import { IndicatorImpl } from 'src/app/model/indicators/indicator.data';
 import { MapLayer } from 'src/app/model/map.layer';
 import { DataService } from 'src/app/services/data.service';
@@ -41,12 +40,15 @@ export class LegendeComponent implements AfterViewInit, OnDestroy {
         filter((indicator) => !!indicator),
         withLatestFrom(this.indicatorStream$)
       ).subscribe(([map, indicator]) => {
-        this.indicator = indicator
-        this.yearStream$ = this.dataService.getSelectedYear()
-        this.initLegend(map)
+        try {
+          this.indicator = indicator
+          this.yearStream$ = this.dataService.getSelectedYear()
+          this.initLegend(map)
+        } catch (ignored) {
+          console.warn(ignored)
+        }
       })
     this.cdRef.detectChanges()
-
   }
 
   ngOnDestroy(): void {
@@ -54,17 +56,25 @@ export class LegendeComponent implements AfterViewInit, OnDestroy {
   }
 
   highlightBounds(value: number): void {
-
+    
   }
 
   initLegend(layer: MapLayer): void {
-    const min = layer.min
-    const max = layer.max
-    const devider = max / RANGES;
+    //FIXME: Legend wird falsch angezeigt
     const colorMap = layer.colorMap
     this.legendItems = []
-    for (let x = min; x <= max; x += devider) {
-      this.legendItems.push(new LegendValue(Math.round(x), Math.round(x + devider), colorMap.getColor(x).toString))
-    }
+    let i = 0
+    const rangeLength = layer.valueRange.length
+    console.log(rangeLength)
+    layer.valueRange.forEach((val) => {
+      let before = 0;
+      if (i > 0 && i < rangeLength - 1) { before = layer.valueRange[i - 1] }
+      if (i == rangeLength - 1) {
+        val = layer.max
+        before = layer.valueRange[i - 1]
+      }
+      this.legendItems.push(new LegendValue(before, val, colorMap.getColor(val).toString))
+      i++;
+    })
   }
 }

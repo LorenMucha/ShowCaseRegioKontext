@@ -93,8 +93,9 @@ export class DataService {
             const vectorLayer = new VectorLayer({ source: vector })
             const max = Math.max(...tableSource.map((item) => item.value))
             const min = Math.min(...tableSource.map((item) => item.value))
-            const temperatureMap = colorRange(MAP_COLORS, this.buildRanges(tableSource.map((item) => item.value)))
-            const mapLayer = new MapLayer(1, vectorLayer, 'Planungsregion', indicator, min, max, Bounds.Berlin, temperatureMap)
+            const range = this.buildRanges(tableSource.map((item) => item.value))
+            const temperatureMap = colorRange(MAP_COLORS,range )
+            const mapLayer = new MapLayer(1, vectorLayer, 'Planungsregion', indicator, min, max, Bounds.Berlin, temperatureMap, range)
             this.mapLayerBerlin = mapLayer
             this.tableFeatures.next(tableSource)
             this.layerBerlinStream$.next(this.mapLayerBerlin)

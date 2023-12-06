@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, OnDestroy, Output } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { map, takeUntil, toArray } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { TableElem } from 'src/app/model/table-elem';
 import { DataService } from 'src/app/services/data.service';
 

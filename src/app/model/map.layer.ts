@@ -15,8 +15,9 @@ export class MapLayer implements MapLayer {
     max: number
     bounds: Bounds
     colorMap: ColorRange
+    valueRange: Array<number>
     //FIXME: refactor to Builder
-    constructor(id?: number, layer?: VectorLayer<any>, name?: string, indicator?: IndicatorImpl, min?: number, max?: number, bounds?: Bounds, colorMap?: ColorRange) {
+    constructor(id?: number, layer?: VectorLayer<any>, name?: string, indicator?: IndicatorImpl, min?: number, max?: number, bounds?: Bounds, colorMap?: ColorRange, range?: Array<number>) {
         this.id = id!
         this.layer = layer!
         this.name = name!
@@ -25,6 +26,7 @@ export class MapLayer implements MapLayer {
         this.max = max!
         this.bounds = bounds!
         this.colorMap = colorMap!
+        this.valueRange = range!
     }
 
     setColorMap(map: ColorRange) {
