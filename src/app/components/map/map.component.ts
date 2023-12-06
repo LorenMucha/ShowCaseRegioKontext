@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core'
 import OlMap from 'ol/Map'
 import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
-import { fromLonLat, toLonLat } from 'ol/proj.js'
+import { fromLonLat } from 'ol/proj.js'
 import Select from 'ol/interaction/Select'
 import OSM from 'ol/source/OSM';
 import { DataService } from 'src/app/services/data.service'
@@ -13,8 +13,9 @@ import Stroke from 'ol/style/Stroke'
 import { Feature } from 'ol'
 import { Bounds } from 'src/app/model/bounds'
 import { MapLayer } from 'src/app/model/map.layer'
-import { IndicatorData } from 'src/app/model/indicators/indicator.data'
-import { ZuUndFortzuege } from 'src/app/model/indicators/zu.fortzuege'
+import { Indicator } from 'src/app/model/indicators/indicator.data'
+import { TableElem } from 'src/app/model/table-elem';
+import { Geometry } from 'ol/geom'
 
 
 const berlinLonLat = [13.404954, 52.520008]
@@ -28,7 +29,8 @@ const mapCenter = fromLonLat(berlinLonLat)
 })
 export class MapComponent implements OnInit, AfterViewInit {
   private select = new Select();
-  private selectedIndicator: IndicatorData = new ZuUndFortzuege()
+  //FIXME: auf indicator class umschreiben
+  @Input({ required: true }) selectedIndicator!: Indicator
   private selectedLayer: Map<Bounds, MapLayer> = new Map<Bounds, MapLayer>()
   private selectedYear: number = 2021
   private selectedBounds: Bounds = Bounds.Berlin
@@ -37,13 +39,12 @@ export class MapComponent implements OnInit, AfterViewInit {
     className: 'bw',
     source: new OSM(),
   })
-  showPopUp: boolean = false
+  popUpIsVisible: boolean = false
   popUpContent: string = ''
 
   constructor(private mapService: DataService) { }
 
   ngOnInit(): void {
-
     this.map = new OlMap({
       view: new View({
         center: mapCenter,
@@ -59,37 +60,28 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.select.on('select', (e) => {
-      const feature = e.selected[0] as Feature
-      feature.setStyle(new Style({
-        fill: feature.get('style').getFill(),
-        stroke: new Stroke({ color: 'black', width: 10 })
-      }))
-      const popup = new Overlay({ element: document.getElementById('popup')! })
-      const extent = getCenter(feature.getGeometry()?.getExtent() as Extent)
-      this.popUpContent = `<div><b>Region:</b> ${feature.get('name')}</div><div><b>Wert:</b> ${feature.get('value')}</div>`
-      popup.setPosition(extent)
-      this.map.addOverlay(popup)
-      this.showPopUp = true
+      this.showPopUp(e.selected[0])
     })
   }
 
-  addMapLayer(bounds?: Bounds, year?: number): void {
-    this.selectedBounds = bounds === undefined ? this.selectedBounds : bounds
-    this.selectedYear = year === undefined ? this.selectedYear : year
+  addMapLayer(bounds?: Bounds, year?: number, indicator?: Indicator): void {
+    this.selectedBounds = bounds ?? this.selectedBounds;
+    this.selectedYear = year ?? this.selectedYear;
+    this.selectedIndicator = indicator ?? this.selectedIndicator
 
-    this.mapService.getMapLayerForBounds(this.selectedIndicator, this.selectedBounds, this.selectedYear).subscribe((layer) => {
+    this.mapService.getMapLayerForBounds(this.selectedIndicator!, this.selectedBounds, this.selectedYear).subscribe((layer) => {
       const vector = layer.layer
       if (this.selectedLayer.has(this.selectedBounds)) {
-        var tempLayer: MapLayer = this.selectedLayer.get(this.selectedBounds)!
-        this.map.removeLayer(tempLayer.layer)
+        const tempLayer: MapLayer = this.selectedLayer.get(this.selectedBounds)!;
+        this.map.removeLayer(tempLayer.layer);
       }
-      this.map.addLayer(vector)
-      this.selectedLayer.set(this.selectedBounds, layer)
-    })
+      this.map.addLayer(vector);
+      this.selectedLayer.set(this.selectedBounds, layer);
+    });
   }
 
   removeMapLayer(bounds: Bounds): void {
-    var layer = bounds === Bounds.Berlin ? this.mapService.mapLayerBerlin : this.mapService.mapLayerBrandenburg
+    let layer = bounds === Bounds.Berlin ? this.mapService.mapLayerBerlin : this.mapService.mapLayerBrandenburg
     this.map.removeLayer(layer?.layer!)
     this.selectedLayer.forEach((item) => {
       if (item.bounds == bounds) {
@@ -98,8 +90,56 @@ export class MapComponent implements OnInit, AfterViewInit {
     })
   }
 
+  selectFeatureByTableElem(elem: TableElem): void {
+    this.selectedLayer.forEach((value: MapLayer, key: Bounds) => {
+      //FIXME: diese Funktion kann seperiert werden
+      const vectorSource = value.layer.getSource()
+      const features = vectorSource.getFeatures() as Array<Feature>
+      const feature = features.filter((item) => elem.name.includes(item.get('name')))[0]
+      if (feature) {
+        this.highlightLayer(feature)
+      }
+    });
+  }
+
+  showPopUp(feature: Feature<Geometry>) {
+    this.highlightLayer(feature)
+    const popup = new Overlay({ element: document.getElementById('popup')! })
+    const extent = getCenter(feature.getGeometry()?.getExtent() as Extent)
+    this.popUpContent = `<div><b>Region:</b> ${feature.get('name')}</div><div><b>Wert:</b> ${feature.get('value')}</div>`
+    popup.setPosition(extent)
+    this.map.addOverlay(popup)
+    this.popUpIsVisible = true
+  }
+
   closePopUp() {
     this.select.getFeatures().clear()
-    this.showPopUp = false
+    this.popUpIsVisible = false
+  }
+
+  resetHighlightByTableElem(elem: TableElem) {
+    this.selectedLayer.forEach((value: MapLayer, key: Bounds) => {
+      //FIXME: diese Funktion kann seperiert werden
+      const vectorSource = value.layer.getSource()
+      const features = vectorSource.getFeatures() as Array<Feature>
+      const feature = features.filter((item) => elem.name.includes(item.get('name')))[0]
+      if (feature) {
+        try {
+          feature.setStyle(new Style({
+            fill: feature.get('style').getFill(),
+            stroke: new Stroke({ color: 'black' })
+          }))
+        } catch (ignored) { }
+      }
+    });
+  }
+
+  private highlightLayer(feature: Feature<Geometry>): void {
+    try {
+      feature.setStyle(new Style({
+        fill: feature.get('style').getFill(),
+        stroke: new Stroke({ color: 'black', width: 10 })
+      }))
+    } catch (ignored) { }
   }
 }

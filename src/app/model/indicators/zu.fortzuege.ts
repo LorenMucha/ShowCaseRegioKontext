@@ -1,5 +1,6 @@
-import { IndicatorData } from "./indicator.data";
+import { IndicatorImpl } from "./indicator.data";
 
+//generated
 export interface ZuUndFortzuegeData {
     "Jahr": number,
     "Kennziffer": number,
@@ -38,8 +39,8 @@ export interface ZuUndFortzuegeData {
     "12073008 Angermünde Fort": number
 }
 
-export class ZuUndFortzuege implements IndicatorData {
+export class ZuUndFortzuege implements IndicatorImpl {
     url: string = 'zu_fortzuege.json'
-    description: string = 'Proident cillum sit duis aliquip ullamco laboris nostrud reprehenderit labore.'
-    title: string = 'Zu und Fortzüge'
+    description: string = 'Der Indikator beschreibt die Differenz zwischen Zuzügen aus den Brandenburger Gemeinden in Richtung Berlin und Fortzüge der Berliner:innen nach Brandenburg im Jahr 2021. Dieser Indikator ist wichtig, um die Muster der Bevölkerungsbewegungen zwischen Berlin und den umliegenden Brandenburger Gemeinden zu verstehen. Darüber hinaus bietet er Einblicke in die Attraktivität der Hauptstadtregion, wirtschaftliche Verflechtungen und demografische Trends.'
+    title: string = 'Außenwanderungssaldo in den Berliner Prognoseräumen aus den Brandenburger Gemeinden'
 }
