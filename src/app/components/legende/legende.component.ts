@@ -56,11 +56,10 @@ export class LegendeComponent implements AfterViewInit, OnDestroy {
   }
 
   highlightBounds(value: number): void {
-    
+
   }
 
   initLegend(layer: MapLayer): void {
-    //FIXME: Legend wird falsch angezeigt
     const colorMap = layer.colorMap
     this.legendItems = []
     let i = 0
