@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { BehaviorSubject, filter, forkJoin, merge, withLatestFrom, zip } from 'rxjs';
+import { BehaviorSubject, filter, withLatestFrom } from 'rxjs';
 import { IndicatorImpl } from 'src/app/model/indicators/indicator.data';
 import { MapLayer } from 'src/app/model/map.layer';
 import { DataService } from 'src/app/services/data.service';
@@ -28,6 +28,7 @@ export class LegendeComponent implements AfterViewInit, OnDestroy {
   indicatorStream$: BehaviorSubject<IndicatorImpl> | undefined
   legendItems: Array<LegendValue> = []
   marked: boolean = false;
+  visible = true;
   private mapLayerStream$: BehaviorSubject<MapLayer> | undefined
 
   constructor(private dataService: DataService, private cdRef: ChangeDetectorRef) { }
@@ -55,8 +56,8 @@ export class LegendeComponent implements AfterViewInit, OnDestroy {
     this.indicatorStream$?.complete()
   }
 
-  highlightBounds(value: number): void {
-
+  showLegend(): void {
+    console.log("Show Legende")
   }
 
   initLegend(layer: MapLayer): void {

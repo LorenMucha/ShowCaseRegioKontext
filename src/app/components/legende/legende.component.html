@@ -1,15 +1,21 @@
-<div class="border border-green-900 p-5 mx-5 mb-5 h-full">
-    <div class="grid grid-cols-6 gap-2 w-full">
-        <div class="col-span-5">
-            <span class="text-xl text-green-900">Indikator: {{indicator?.title}} für das Jahr {{yearStream$ |
-                async}}</span>
-            <div>{{indicator?.description}}</div>
-        </div>
-        <div class="float-right">
-            <ng-container class="inline-block space-x-1" *ngFor="let item of legendItems">
-                    <div [style.background]="item.color" class="w-5 h-5 float-left mr-3"></div>
-                    <div>{{item.min}}-{{item.max}}</div>
-            </ng-container>
+<div>
+    <div *ngIf="visible"
+        class="absolute border border-green-900 p-2 z-50 w-48 h-24 bottom-10 bg-white overflow-x-hidden overflow-y-auto overflow-scroll">
+        <div class="text-xl pb-1">Legende</div>
+        <div class="text-sm">
+            <div>
+                <span><b>Indikator:</b> {{indicator?.title}} für das Jahr {{yearStream$ |
+                    async}}</span>
+                <div>{{indicator?.description}}</div>
+            </div>
+            <div class="float-left w-max">
+                <ng-container *ngFor="let item of legendItems">
+                    <div class="flex pb-1">
+                        <div [style.background]="item.color" class="w-5 h-5 float-left mr-3"></div>
+                        <div>{{item.min}}-{{item.max}}</div>
+                    </div>
+                </ng-container>
+            </div>
         </div>
     </div>
 </div>

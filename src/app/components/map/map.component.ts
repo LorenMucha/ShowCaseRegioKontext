@@ -17,7 +17,6 @@ import { Indicator } from 'src/app/model/indicators/indicator.data'
 import { TableElem } from 'src/app/model/table-elem';
 import { Geometry } from 'ol/geom'
 
-
 const berlinLonLat = [13.404954, 52.520008]
 const mapCenter = fromLonLat(berlinLonLat)
 
@@ -51,8 +50,8 @@ export class MapComponent implements OnInit, AfterViewInit {
         zoom: 10,
       }),
       layers: [this.baseMap],
-      target: 'ol-map'
-    })
+      target: 'ol-map',
+   })
 
     this.addMapLayer(this.selectedBounds, this.selectedYear)
     this.map.addInteraction(this.select);
