@@ -7,6 +7,5 @@ main {
 }
 
 main .map-container {
-    height: 100%;
-    @apply w-full;
+    @apply w-full h-full;
 }

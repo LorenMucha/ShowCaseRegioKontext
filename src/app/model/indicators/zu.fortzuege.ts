@@ -42,5 +42,5 @@ export interface ZuUndFortzuegeData {
 export class ZuUndFortzuege implements IndicatorImpl {
     url: string = 'zu_fortzuege.json'
     description: string = 'Der Indikator beschreibt die Differenz zwischen Zuzügen aus den Brandenburger Gemeinden in Richtung Berlin und Fortzüge der Berliner:innen nach Brandenburg im Jahr 2021. Dieser Indikator ist wichtig, um die Muster der Bevölkerungsbewegungen zwischen Berlin und den umliegenden Brandenburger Gemeinden zu verstehen. Darüber hinaus bietet er Einblicke in die Attraktivität der Hauptstadtregion, wirtschaftliche Verflechtungen und demografische Trends.'
-    title: string = 'Außenwanderungssaldo in den Berliner Prognoseräumen aus den Brandenburger Gemeinden'
+    title: string = 'Außenwanderungssaldo'
 }

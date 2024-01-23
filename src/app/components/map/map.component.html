@@ -1,6 +1,8 @@
-<div class="h-[80vh]">
-    <app-legende></app-legende>
-    <div id="ol-map" class="h-full w-full"></div>
+<!-- FIXME: dynamic map height -->
+<div class="h-full">
+    <div id="ol-map" class="h-full w-full">
+        <app-legende></app-legende>
+    </div>
     <div id="popup" class="ol-popup" [hidden]="!popUpIsVisible">
         <a href="#" id="popup-closer" class="ol-popup-closer" (click)="closePopUp()"></a>
         <div id="popup-content" [innerHTML]="popUpContent"></div>
