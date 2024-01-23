@@ -1,5 +1,5 @@
-<div *ngIf="visible" class="ol-unselectable ol-control border border-green-900 p-2 z-50 w-48 !bg-white top-[66vh]">
-    <div class="h-[250px] !overflow-y-auto">
+<div *ngIf="visible" class="ol-unselectable ol-control border border-green-900 p-2 z-50 w-48 !bg-white bottom-0">
+    <div class="h-[25vh] !overflow-y-auto">
         <div class="text-xl pb-1 w-max">Legende</div>
         <div class="w-max text-sm">
             <ng-container *ngFor="let item of legendItems">
@@ -9,12 +9,11 @@
                 </div>
             </ng-container>
         </div>
-        <div class="text-sm pt-2">
-            <div>
-                <span><b>Indikator:</b> {{indicator?.title}} für das Jahr {{yearStream$ |
-                    async}}</span>
-                <div>{{indicator?.description}}</div>
-            </div>
+        <div class="pt-2">
+            <div>Indikator</div>
+            <div class="bold">{{indicator?.title}} für das Jahr {{yearStream$ |async}}</div>
+            <div>Beschreibung</div>
+            <div>{{indicator?.description}}</div>
         </div>
     </div>
 </div>
