@@ -29,8 +29,8 @@ const DEFAULT_DURATION = 300
   imports: [CommonModule, AsyncPipe, FontAwesomeModule],
   animations: [
     trigger('collapse', [
-      state('false', style({ height: "25vh" })),
-      state('true', style({ height: "70vh" })),
+      state('false', style({ height: "25vh", width: "14rem"})),
+      state('true', style({ height: "70vh", width: "20rem"})),
       transition('false => true', animate(DEFAULT_DURATION + 'ms ease-in')),
       transition('true => false', animate(DEFAULT_DURATION + 'ms ease-out'))
     ])

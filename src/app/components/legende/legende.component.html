@@ -1,11 +1,12 @@
-<div class="ol-unselectable ol-control border border-green-900 p-2 z-50 w-48 !bg-white bottom-0">
-    <div class="w-full">
+<div class="ol-unselectable ol-control border border-green-900 p-2 z-50 !bg-white bottom-0 collapsible"
+    [@collapse]="collapsed" #legendSection>
+    <div>
         <div class="float-right cursor-pointer">
             <fa-icon *ngIf="!collapsed" [icon]="faExpand" (click)="collapse()"></fa-icon>
             <fa-icon *ngIf="collapsed" [icon]="faCompress" (click)="expand()"></fa-icon>
         </div>
     </div>
-    <section class="!overflow-y-auto !overflow-x-hidden collapsible" [@collapse]="collapsed" #legendSection>
+    <div class="!overflow-y-auto !overflow-x-hidden h-full">
         <div class="text-xl pb-1 w-max">Legende</div>
         <div class="w-max text-sm">
             <ng-container *ngFor="let item of legendItems">
@@ -21,5 +22,5 @@
             <div class="font-bold">Beschreibung</div>
             <div>{{indicator?.description}}</div>
         </div>
-    </section>
+    </div>
 </div>
