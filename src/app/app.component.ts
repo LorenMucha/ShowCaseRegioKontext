@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MapComponent } from './components/map/map.component';
 import { MENU } from './constants';
@@ -12,8 +12,7 @@ import { TabElem } from './model/tabs-elem';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent{
-
+export class AppComponent {
   tabList: Array<TabElem> = Array.from(MENU.keys())
   selectedTab: TabElem = this.tabList[0]
   indicatorList: Array<Indicator> = MENU.get(this.selectedTab)!

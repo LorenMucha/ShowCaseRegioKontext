@@ -1,3 +1,3 @@
 ::ng-deep tr:hover:not(.mat-mdc-header-row) {
-   @apply !bg-green-900
+   @apply !bg-green-100
 }

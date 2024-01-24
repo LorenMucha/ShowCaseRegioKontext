@@ -1,12 +1,6 @@
 :host {
     @apply flex flex-col h-full w-full overflow-hidden;
 }
-
-main {
-    @apply px-5 pt-5;
-}
-
 main .map-container {
-    height: 100%;
-    @apply w-full;
+    @apply w-full h-full;
 }

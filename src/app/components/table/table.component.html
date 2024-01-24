@@ -1,12 +1,11 @@
-<!-- FIXME: dynamic heights-->
-<div class="h-[50vh]">
+<div class="h-full">
     <mat-form-field appearance="outline" class="w-full px-3">
         <input type="text" matInput placeholder="Gemeinde hier suchen" (keyup)="applyFilter($event)">
         <button type="button" mat-icon-button matSuffix>
             <mat-icon aria-hidden="false" aria-label="Search" fontIcon="search"></mat-icon>
         </button>
     </mat-form-field>
-    <div class="overflow-x-auto h-full">
+    <div class="lg:h-[74vh] h-[76vh] !overflow-y-scroll">
         <table mat-table [dataSource]="tableSource">
             <caption class="hidden">Tabelle mit Indikator Werten</caption>
             <ng-container [matColumnDef]="column" *ngFor="let column of">
@@ -29,7 +28,7 @@
                 <td mat-cell *matCellDef="let element" class="break-all"> {{element.value}} </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns" class="sticky z-50 top-0 !bg-white"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class=" break-words py-0"
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class=" break-words"
                 (mouseover)="hoverLayer(row)" (mouseleave)="resetHover(row)"></tr>
         </table>
     </div>

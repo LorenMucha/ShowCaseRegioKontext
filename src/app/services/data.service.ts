@@ -19,8 +19,7 @@ import { RANGES } from '../constants'
 
 const DATA_SRC_BERLIN = 'assets/geojson/pgr_berlin_2021.json'
 const DATA_SRC_BRB = 'assets/geojson/gem_brb_2023.json'
-const MAP_COLORS = [[132, 22, 54], [173, 48, 67], [216, 76, 89], [233, 105, 90], [242, 138, 72],
-[250, 180, 0], [255, 217, 106], [204, 183, 154]];
+const MAP_COLORS = [[132, 22, 54], [173, 48, 67], [216, 76, 89], [233, 105, 90], [242, 138, 72], [250, 180, 0], [255, 217, 106], [204, 183, 154]];
 
 @Injectable({
   providedIn: 'root',
@@ -77,7 +76,7 @@ export class DataService {
 
             features.forEach((feature) => {
               let value = 0
-              const name = feature.get('PROGNOSERA')
+              const name = feature.get('PGR_NAME')
               data
                 .filter((x) => name.includes(x.Name))
                 .forEach((y) => value += y['Außenwanderungen Zuzüge insgesamt'])
@@ -94,7 +93,7 @@ export class DataService {
             const max = Math.max(...tableSource.map((item) => item.value))
             const min = Math.min(...tableSource.map((item) => item.value))
             const range = this.buildRanges(tableSource.map((item) => item.value))
-            const temperatureMap = colorRange(MAP_COLORS,range )
+            const temperatureMap = colorRange(MAP_COLORS, range)
             const mapLayer = new MapLayer(1, vectorLayer, 'Planungsregion', indicator, min, max, Bounds.Berlin, temperatureMap, range)
             this.mapLayerBerlin = mapLayer
             this.tableFeatures.next(tableSource)
