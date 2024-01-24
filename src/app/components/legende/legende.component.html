@@ -1,5 +1,11 @@
-<div *ngIf="visible" class="ol-unselectable ol-control border border-green-900 p-2 z-50 w-48 !bg-white bottom-0">
-    <div class="h-[25vh] !overflow-y-auto">
+<div class="ol-unselectable ol-control border border-green-900 p-2 z-50 w-48 !bg-white bottom-0">
+    <div class="w-full">
+        <div class="float-right cursor-pointer">
+            <fa-icon *ngIf="!collapsed" [icon]="faExpand" (click)="collapse()"></fa-icon>
+            <fa-icon *ngIf="collapsed" [icon]="faCompress" (click)="expand()"></fa-icon>
+        </div>
+    </div>
+    <section class="!overflow-y-auto !overflow-x-hidden collapsible" [@collapse]="collapsed" #legendSection>
         <div class="text-xl pb-1 w-max">Legende</div>
         <div class="w-max text-sm">
             <ng-container *ngFor="let item of legendItems">
@@ -10,10 +16,10 @@
             </ng-container>
         </div>
         <div class="pt-2">
-            <div>Indikator</div>
+            <div class="font-bold">Indikator</div>
             <div class="bold">{{indicator?.title}} für das Jahr {{yearStream$ |async}}</div>
-            <div>Beschreibung</div>
+            <div class="font-bold">Beschreibung</div>
             <div>{{indicator?.description}}</div>
         </div>
-    </div>
+    </section>
 </div>

@@ -13,7 +13,6 @@ import { TabElem } from './model/tabs-elem';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-
   tabList: Array<TabElem> = Array.from(MENU.keys())
   selectedTab: TabElem = this.tabList[0]
   indicatorList: Array<Indicator> = MENU.get(this.selectedTab)!

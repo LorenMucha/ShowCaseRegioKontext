@@ -4,9 +4,11 @@
   "configurations": [
     {
       "name": "debug",
-      "type": "chrome",
+      "type": "firefox",
       "request": "launch",
-      "url": "http://localhost:4200/"
+      "reAttach": true,
+      "url": "http://localhost:4200/",
+      "webRoot": "${workspaceFolder}"
     }
   ]
 }

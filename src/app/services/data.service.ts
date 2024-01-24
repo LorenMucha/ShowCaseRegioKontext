@@ -76,7 +76,7 @@ export class DataService {
 
             features.forEach((feature) => {
               let value = 0
-              const name = feature.get('PROGNOSERA')
+              const name = feature.get('PGR_NAME')
               data
                 .filter((x) => name.includes(x.Name))
                 .forEach((y) => value += y['Außenwanderungen Zuzüge insgesamt'])

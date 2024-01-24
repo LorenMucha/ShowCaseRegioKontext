@@ -30,9 +30,9 @@ import { LegendeComponent } from './components/legende/legende.component';
     TapsComponent,
     TableComponent,
     TimesliderComponent,
-    LegendeComponent,
   ],
   imports: [
+    LegendeComponent,
     HttpClientModule,
     BrowserModule,
     AppRoutingModule,
