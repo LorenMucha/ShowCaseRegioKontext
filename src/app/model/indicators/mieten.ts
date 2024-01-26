@@ -1,4 +1,8 @@
-export interface Mieten {
+import { IndicatorImpl } from "./indicator.data"
+
+export interface MietenData{
+  "Jahr": number
+  "Kennziffer": number,
   "AGS aka GKZ (Stand 31.12.2017)": number
   "Untergliederung 1. Ebene (U1)": string
   "Untergliederung 2. Ebene (U2)": string
@@ -71,4 +75,11 @@ export interface Mieten {
   "Anz. geschl. Angebote (Laufzeit geschlossene Wochen)": number
   "arith. Mittel Wochen (Laufzeit geschlossene Wochen)": string
   "Median (Laufzeit geschlossene Wochen)": any
+}
+
+export class ArithmetischesMittel implements IndicatorImpl {
+  url: string = 'mieten.json'
+  description: string = 'Elit consectetur esse esse esse sint nisi et et elit ex.'
+  title: string = 'arith. Mittel €/m²'
+  geosonUrl: string = 'plr_berlin_2021.json'
 }

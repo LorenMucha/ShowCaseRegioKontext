@@ -20,7 +20,6 @@ import { Geometry } from 'ol/geom'
 const berlinLonLat = [13.404954, 52.520008]
 const mapCenter = fromLonLat(berlinLonLat)
 
-//FIXME: dynamic heigth for map
 @Component({
   styleUrls: ['./map.component.css'],
   selector: 'app-map',

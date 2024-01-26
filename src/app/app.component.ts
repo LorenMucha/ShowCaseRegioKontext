@@ -6,6 +6,7 @@ import { Bounds } from './model/bounds';
 import { Indicator } from './model/indicators/indicator.data';
 import { TableElem } from './model/table-elem';
 import { TabElem } from './model/tabs-elem';
+import { ArithmetischesMittel } from './model/indicators/mieten';
 
 @Component({
   selector: 'app-root',
@@ -14,9 +15,11 @@ import { TabElem } from './model/tabs-elem';
 })
 export class AppComponent {
   tabList: Array<TabElem> = Array.from(MENU.keys())
-  selectedTab: TabElem = this.tabList[0]
+  selectedTab: TabElem = this.tabList[1]
+  //selectedTab: TabElem = this.tabList[0]
   indicatorList: Array<Indicator> = MENU.get(this.selectedTab)!
-  selectedIndicator: Indicator = this.indicatorList[0]
+  //selectedIndicator: Indicator = this.indicatorList[0]
+  selectedIndicator: Indicator = this.indicatorList[this.indicatorList.length-1]
   objectKeys = Object.keys;
   checked_b: boolean = true;
   checked_brb: boolean = false;
@@ -39,7 +42,7 @@ export class AppComponent {
   }
 
   selectIndicator(indicator: Indicator) {
-    console.log('click')
+    console.log(indicator)
     this.map?.addMapLayer(Bounds.Berlin, undefined, indicator)
   }
 

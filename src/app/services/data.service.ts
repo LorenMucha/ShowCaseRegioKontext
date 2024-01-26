@@ -15,9 +15,9 @@ import { ZuUndFortzuege, ZuUndFortzuegeData } from '../model/indicators/zu.fortz
 import { MapLayer } from '../model/map.layer'
 import { TableElem } from '../model/table-elem'
 import { RANGES } from '../constants'
+import { MietenData } from '../model/indicators/mieten'
 
 
-const DATA_SRC_BERLIN = 'assets/geojson/pgr_berlin_2021.json'
 const DATA_SRC_BRB = 'assets/geojson/gem_brb_2023.json'
 const MAP_COLORS = [[132, 22, 54], [173, 48, 67], [216, 76, 89], [233, 105, 90], [242, 138, 72], [250, 180, 0], [255, 217, 106], [204, 183, 154]];
 
@@ -60,12 +60,14 @@ export class DataService {
     this.selectedYear.next(year)
 
     if (bounds == Bounds.Berlin) {
-      return forkJoin([this.getLayerBerlin(), this.getIndicatorData(indicator, year)])
+      return forkJoin([this.getLayerBerlin(indicator), this.getIndicatorData(indicator, year)])
         .pipe(
           tap(([, data]) => {
             data.forEach((data) => {
+              console.log(data)
               //create Table source
-              const tableFeature = new TableElem(data.Kennziffer, data.Name, data['Außenwanderungen Zuzüge insgesamt'])
+              // const tableFeature = new TableElem(data.Kennziffer, data.Name, data['Außenwanderungen Zuzüge insgesamt'])
+              const tableFeature = new TableElem(data['ID U3'], data['Untergliederung 3. Ebene (U3)'], data['arith. Mittel €/m² (Gesamtmiete pro m² €/m²)'])
               tableSource.push(tableFeature)
             })
           }),
@@ -78,8 +80,10 @@ export class DataService {
               let value = 0
               const name = feature.get('PGR_NAME')
               data
-                .filter((x) => name.includes(x.Name))
-                .forEach((y) => value += y['Außenwanderungen Zuzüge insgesamt'])
+                // .filter((x) => name.includes(x.Name))
+                .filter((x) => name.includes(x['Untergliederung 3. Ebene (U3)']))
+                //.forEach((y) => value += y['Außenwanderungen Zuzüge insgesamt'])
+                .forEach((y) => value += y['arith. Mittel €/m² (Gesamtmiete pro m² €/m²)'])
 
               vector.addFeature(new Feature({
                 value: value,
@@ -113,9 +117,9 @@ export class DataService {
     }
   }
 
-  private getLayerBerlin(): Observable<VectorLayer<any>> {
+  private getLayerBerlin(indicator: Indicator): Observable<VectorLayer<any>> {
     if (this.layerBerlin === undefined) {
-      return this.httpClient.get(DATA_SRC_BERLIN)
+      return this.httpClient.get(`assets/geojson/${indicator.geosonUrl}`)
         .pipe(
           map((layer) => {
             const vectorSource = new VectorSource({
@@ -149,7 +153,7 @@ export class DataService {
 
   private getIndicatorData(indicator: Indicator, year: number) {
     const years = new Set<number>()
-    return this.httpClient.get<ZuUndFortzuegeData[]>(`assets/data/${indicator.url}`)
+    return this.httpClient.get<MietenData[]>(`assets/data/${indicator.url}`)
       .pipe(
         mergeAll(),
         tap((item) => {
