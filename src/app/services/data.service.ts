@@ -64,10 +64,11 @@ export class DataService {
         .pipe(
           tap(([, data]) => {
             data.forEach((data) => {
-              console.log(data)
               //create Table source
               // const tableFeature = new TableElem(data.Kennziffer, data.Name, data['Außenwanderungen Zuzüge insgesamt'])
-              const tableFeature = new TableElem(data['ID U3'], data['Untergliederung 3. Ebene (U3)'], data['arith. Mittel €/m² (Gesamtmiete pro m² €/m²)'])
+              const value: number = parseFloat(data['arith. Mittel €/m² (Gesamtmiete pro m² €/m²)'])
+              console.log(value)
+              const tableFeature = new TableElem(data['ID U3'], data['Untergliederung 3. Ebene (U3)'], value)
               tableSource.push(tableFeature)
             })
           }),
@@ -77,13 +78,15 @@ export class DataService {
             let features = source.getFeatures() as Array<Feature>
 
             features.forEach((feature) => {
+
               let value = 0
               const name = feature.get('PGR_NAME')
+
               data
                 // .filter((x) => name.includes(x.Name))
                 .filter((x) => name.includes(x['Untergliederung 3. Ebene (U3)']))
                 //.forEach((y) => value += y['Außenwanderungen Zuzüge insgesamt'])
-                .forEach((y) => value += y['arith. Mittel €/m² (Gesamtmiete pro m² €/m²)'])
+                .forEach((y) => value += parseFloat(y['arith. Mittel €/m² (Gesamtmiete pro m² €/m²)']))
 
               vector.addFeature(new Feature({
                 value: value,
@@ -91,8 +94,8 @@ export class DataService {
                 name: name,
                 id: feature.get('AGS')
               }))
-            })
 
+            })
             const vectorLayer = new VectorLayer({ source: vector })
             const max = Math.max(...tableSource.map((item) => item.value))
             const min = Math.min(...tableSource.map((item) => item.value))
@@ -153,16 +156,17 @@ export class DataService {
 
   private getIndicatorData(indicator: Indicator, year: number) {
     const years = new Set<number>()
+    // return this.httpClient.get<MietenData[]>(`assets/data/${indicator.url}`)
+    //   .pipe(
+    //     mergeAll(),
+    //     tap((item) => {
+    //       years.add(item.Jahr)
+    //     }),
+    //     filter((x) => !x.Kennziffer === false && x.Jahr == year),
+    //     toArray(),
+    //     tap(() => this.receivedYears.next(years)),
+    //   )
     return this.httpClient.get<MietenData[]>(`assets/data/${indicator.url}`)
-      .pipe(
-        mergeAll(),
-        tap((item) => {
-          years.add(item.Jahr)
-        }),
-        filter((x) => !x.Kennziffer === false && x.Jahr == year),
-        toArray(),
-        tap(() => this.receivedYears.next(years)),
-      )
   }
 
   private styleMapLayer(layer: Observable<MapLayer>): Observable<MapLayer> {
