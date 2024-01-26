@@ -39,7 +39,7 @@ export class AppComponent {
   }
 
   selectIndicator(indicator: Indicator) {
-    console.log('click')
+    this.selectedIndicator = indicator
     this.map?.addMapLayer(Bounds.Berlin, undefined, indicator)
   }
 

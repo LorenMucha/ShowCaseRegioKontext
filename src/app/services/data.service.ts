@@ -11,7 +11,7 @@ import Style from 'ol/style/Style'
 import { BehaviorSubject, Observable, filter, forkJoin, map, mergeAll, mergeMap, of, tap, toArray } from 'rxjs'
 import { Bounds } from '../model/bounds'
 import { Indicator } from '../model/indicators/indicator.data'
-import { ZuUndFortzuege, ZuUndFortzuegeData } from '../model/indicators/zu.fortzuege'
+import { ZuZuege, ZuZuegeData } from '../model/indicators/zuzuege'
 import { MapLayer } from '../model/map.layer'
 import { TableElem } from '../model/table-elem'
 import { RANGES } from '../constants'
@@ -28,7 +28,7 @@ export class DataService {
   private layerBrb: VectorLayer<any> | undefined
   private layerBerlin: VectorLayer<any> | undefined
   private tableFeatures: BehaviorSubject<TableElem[]> = new BehaviorSubject<TableElem[]>([])
-  private selectedIndicator: BehaviorSubject<Indicator> = new BehaviorSubject<Indicator>(new ZuUndFortzuege())
+  private selectedIndicator: BehaviorSubject<Indicator> = new BehaviorSubject<Indicator>(new ZuZuege())
   private selectedYear: BehaviorSubject<number> = new BehaviorSubject<number>(0)
   public mapLayerBerlin: MapLayer | undefined
   private layerBerlinStream$: BehaviorSubject<MapLayer> = new BehaviorSubject(new MapLayer())
@@ -65,7 +65,7 @@ export class DataService {
           tap(([, data]) => {
             data.forEach((data) => {
               //create Table source
-              const tableFeature = new TableElem(data.Kennziffer, data.Name, data['Außenwanderungen Zuzüge insgesamt'])
+              const tableFeature = new TableElem(data.Kennziffer, data.Name, data[indicator.title])
               tableSource.push(tableFeature)
             })
           }),
@@ -79,7 +79,7 @@ export class DataService {
               const name = feature.get('PGR_NAME')
               data
                 .filter((x) => name.includes(x.Name))
-                .forEach((y) => value += y['Außenwanderungen Zuzüge insgesamt'])
+                .forEach((y) => value += y[indicator.title])
 
               vector.addFeature(new Feature({
                 value: value,
@@ -149,7 +149,7 @@ export class DataService {
 
   private getIndicatorData(indicator: Indicator, year: number) {
     const years = new Set<number>()
-    return this.httpClient.get<ZuUndFortzuegeData[]>(`assets/data/${indicator.url}`)
+    return this.httpClient.get<any[]>(`assets/data/${indicator.url}`)
       .pipe(
         mergeAll(),
         tap((item) => {

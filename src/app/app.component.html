@@ -6,8 +6,8 @@
   <div class="absolute right-5 left-5 bottom-5 top-16 overflow-hidden">
     <div class="map-container pl-5">
       <div class="inline-flex items-end mt-5 w-full" role="group">
-        <button class="w-fit p-2 border border-green-900" type="button"
-          [ngClass]="{'bg-green-100': indicator == selectedIndicator, 'bg-transparent disabled': indicator != selectedIndicator}"
+        <button class="w-fit p-2 border border-green-900" type="button" (click)="selectIndicator(indicator)"
+          [ngClass]="{'bg-green-100': indicator == selectedIndicator, 'bg-transparent': indicator != selectedIndicator}"
           *ngFor="let indicator of indicatorList">{{indicator.title}}</button>
       </div>
       <!--Map-->
