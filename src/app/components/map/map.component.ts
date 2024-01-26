@@ -14,11 +14,20 @@ import { Feature } from 'ol'
 import { Bounds } from 'src/app/model/bounds'
 import { MapLayer } from 'src/app/model/map.layer'
 import { Indicator } from 'src/app/model/indicators/indicator.data'
-import { TableElem } from 'src/app/model/table-elem';
+import { TableElem } from 'src/app/model/table-elem'
 import { Geometry } from 'ol/geom'
+import {OverviewMap, defaults as defaultControls} from 'ol/control.js'
 
 const berlinLonLat = [13.404954, 52.520008]
 const mapCenter = fromLonLat(berlinLonLat)
+
+const overviewMapControl = new OverviewMap({
+  layers: [
+    new TileLayer({
+      source: new OSM(),
+    }),
+  ],
+});
 
 //FIXME: dynamic heigth for map
 @Component({
@@ -45,6 +54,7 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.map = new OlMap({
+      controls: defaultControls().extend([overviewMapControl]),
       view: new View({
         center: mapCenter,
         zoom: 10,
