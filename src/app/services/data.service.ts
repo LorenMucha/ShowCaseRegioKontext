@@ -5,16 +5,13 @@ import { Feature } from 'ol'
 import GeoJSON from 'ol/format/GeoJSON'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
-import Fill from 'ol/style/Fill'
-import Stroke from 'ol/style/Stroke'
-import Style from 'ol/style/Style'
 import { BehaviorSubject, Observable, filter, forkJoin, map, mergeAll, mergeMap, of, tap, toArray } from 'rxjs'
 import { Bounds } from '../model/bounds'
 import { Indicator } from '../model/indicators/indicator.data'
-import { ZuZuege, ZuZuegeData } from '../model/indicators/zuzuege'
+import { ZuZuege } from '../model/indicators/zuzuege'
 import { MapLayer } from '../model/map.layer'
 import { TableElem } from '../model/table-elem'
-import { RANGES } from '../constants'
+import { VisualizeService } from './visualize.service'
 
 
 const DATA_SRC_BERLIN = 'assets/geojson/pgr_berlin_2021.json'
@@ -34,7 +31,7 @@ export class DataService {
   private layerBerlinStream$: BehaviorSubject<MapLayer> = new BehaviorSubject(new MapLayer())
   public mapLayerBrandenburg: MapLayer | undefined
   private receivedYears: BehaviorSubject<Set<number>> = new BehaviorSubject<Set<number>>(new Set())
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient, private visualService: VisualizeService) { }
 
   getMapLayerBerlinStream(): BehaviorSubject<MapLayer> {
     return this.layerBerlinStream$
@@ -92,7 +89,7 @@ export class DataService {
             const vectorLayer = new VectorLayer({ source: vector })
             const max = Math.max(...tableSource.map((item) => item.value))
             const min = Math.min(...tableSource.map((item) => item.value))
-            const range = this.buildRanges(tableSource.map((item) => item.value))
+            const range = this.visualService.buildRanges(tableSource.map((item) => item.value))
             const temperatureMap = colorRange(MAP_COLORS, range)
             const mapLayer = new MapLayer(1, vectorLayer, 'Planungsregion', indicator, min, max, Bounds.Berlin, temperatureMap, range)
             this.mapLayerBerlin = mapLayer
@@ -100,7 +97,7 @@ export class DataService {
             this.layerBerlinStream$.next(this.mapLayerBerlin)
             return of(this.mapLayerBerlin)
           }),
-          this.styleMapLayer
+          this.visualService.styleMapLayer
         )
     } else {
       return this.getLayerBrB().pipe(
@@ -159,53 +156,5 @@ export class DataService {
         toArray(),
         tap(() => this.receivedYears.next(years)),
       )
-  }
-
-  private styleMapLayer(layer: Observable<MapLayer>): Observable<MapLayer> {
-    return layer.pipe(
-      map((item) => {
-        const vector = new VectorSource()
-        const source = item.layer.getSource()
-        const features = source.getFeatures() as Array<Feature>
-        const temperatureMap = item.colorMap
-        features.forEach((layer) => {
-          const value = layer.get('value')
-          const color = temperatureMap.getColor(value)
-          const style = new Style({
-            fill: new Fill({
-              color: `rgba(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b},  0.5)`
-            }),
-            stroke: new Stroke({
-              color: 'black'
-            })
-          })
-          layer.setStyle(style)
-          layer.set('style', style)
-          vector.addFeature(layer)
-        })
-        item.setColorMap(temperatureMap)
-        item.setLayer(new VectorLayer({ source: vector }))
-        return item
-      })
-    )
-  }
-
-  private buildRanges(numbers: Array<number>): Array<number> {
-    const min = Math.min.apply(null, numbers);
-    const max = Math.max.apply(null, numbers);
-    const spread = max - min;
-    const step = spread / RANGES;
-    const ranges = [];
-
-    for (let i = 0; i < RANGES; i++) {
-      for (let n = 0; n < numbers.length - 1; n++) {
-        if (numbers[n] >= step * i + min && numbers[n] < step * (i + 1) + min) {
-          if (!ranges[i]) ranges[i] = 0;
-          ranges[i]++;
-        }
-      }
-    }
-
-    return ranges;
   }
 }
