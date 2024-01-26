@@ -16,7 +16,8 @@ import { MapLayer } from 'src/app/model/map.layer'
 import { Indicator } from 'src/app/model/indicators/indicator.data'
 import { TableElem } from 'src/app/model/table-elem'
 import { Geometry } from 'ol/geom'
-import {OverviewMap, defaults as defaultControls} from 'ol/control.js'
+import { OverviewMap, defaults as defaultControls } from 'ol/control.js'
+import FullScreen from 'ol/control/FullScreen.js';
 
 const berlinLonLat = [13.404954, 52.520008]
 const mapCenter = fromLonLat(berlinLonLat)
@@ -54,14 +55,14 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.map = new OlMap({
-      controls: defaultControls().extend([overviewMapControl]),
+      controls: defaultControls().extend([overviewMapControl, new FullScreen()]),
       view: new View({
         center: mapCenter,
         zoom: 10,
       }),
       layers: [this.baseMap],
       target: 'ol-map',
-   })
+    })
 
     this.addMapLayer(this.selectedBounds, this.selectedYear)
     this.map.addInteraction(this.select);
