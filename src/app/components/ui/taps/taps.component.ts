@@ -11,9 +11,11 @@ export class TapsComponent {
   private selectedTab: TabElem | undefined
   @Output() tabChangeEvent = new EventEmitter<TabElem>();
   changeTab(tab: TabElem) {
-    this.selectedTab = tab
-    this.tabList.forEach((tab) => { tab.active = false })
-    this.selectedTab.active = !this.selectedTab.active
-    this.tabChangeEvent.emit(this.selectedTab)
+    if (tab.active) {
+      this.selectedTab = tab
+      this.tabList.forEach((tab) => { tab.active = false })
+      this.selectedTab.active = !this.selectedTab.active
+      this.tabChangeEvent.emit(this.selectedTab)
+    }
   }
 }

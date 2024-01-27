@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, EventEmitter, OnDestroy, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { BehaviorSubject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -11,14 +12,28 @@ import { DataService } from 'src/app/services/data.service';
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.css']
 })
-export class TableComponent implements AfterViewInit, OnDestroy {
+export class TableComponent implements AfterViewInit, OnDestroy, OnInit {
   spatialName: string | undefined
-  tableSource = new MatTableDataSource<TableElem>();
+  tableSource = new MatTableDataSource<TableElem>()
   private tableSourceStream$: BehaviorSubject<TableElem[]> | undefined
-  displayedColumns: string[] = ['id', 'name', 'value'];
-  @Output() tableHoverEvent = new EventEmitter<TableElem>();
-  @Output() tableHoverResetEvent = new EventEmitter<TableElem>();
+  displayedColumns: string[] = ['id', 'name', 'value']
+  @Output() tableHoverEvent = new EventEmitter<TableElem>()
+  @Output() tableHoverResetEvent = new EventEmitter<TableElem>()
+
+  @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
+    this.tableSource.sort = sort;
+  }
+
   constructor(private dataService: DataService) { }
+
+  ngOnInit(): void {
+    this.tableSource.sort = this.sort
+
+    const sortState: Sort = { active: 'name', direction: 'desc' };
+    this.sort.active = sortState.active;
+    this.sort.direction = sortState.direction;
+    this.sort.sortChange.emit(sortState);
+  }
 
   sortByName(a: TableElem, b: TableElem) {
     const nameA = a.name.toLocaleUpperCase();

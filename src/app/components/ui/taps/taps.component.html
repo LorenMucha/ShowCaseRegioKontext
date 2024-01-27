@@ -1,4 +1,5 @@
 <div class="inline-flex items-end w-full" role="group">
     <button class="btn w-full border border-green-900 bg-green-100" *ngFor="let tab of tabList" (click)="changeTab(tab)"
-        [ngClass]="{'btn-active': tab.active, 'btn': !tab.active}" type="button">{{tab.title}}</button>
+        [ngClass]="{'btn-active': tab.active, 'btn': !tab.active, 'bg-transparent disabled': !tab.active}" 
+        type="button">{{tab.title}}</button>
 </div>

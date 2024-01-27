@@ -22,6 +22,7 @@ import { TableComponent } from './components/table/table.component';
 import { DataService } from './services/data.service';
 import { TimesliderComponent } from './components/ui/timeslider/timeslider.component';
 import { LegendeComponent } from './components/legende/legende.component';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { LegendeComponent } from './components/legende/legende.component';
     BrowserAnimationsModule,
     MatSlideToggleModule,
     MatSliderModule,
+    MatSortModule,
     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatTableModule, MatIconModule, MatCheckboxModule
   ],
   providers: [DataService, {
