@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core'
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core'
 import OlMap from 'ol/Map'
 import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
@@ -17,7 +17,13 @@ import { Indicator } from 'src/app/model/indicators/indicator.data'
 import { TableElem } from 'src/app/model/table-elem'
 import { Geometry } from 'ol/geom'
 import { OverviewMap, defaults as defaultControls } from 'ol/control.js'
+import { faChartLine } from '@fortawesome/free-solid-svg-icons'
 import FullScreen from 'ol/control/FullScreen.js';
+import { LegendeComponent } from "../legende/legende.component";
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
+import { CommonModule } from '@angular/common'
+import { IndicatorDialogComponent, IndicatorDialogData } from '../ui/dialog/popup.component'
+
 
 const berlinLonLat = [13.404954, 52.520008]
 const mapCenter = fromLonLat(berlinLonLat)
@@ -30,16 +36,18 @@ const overviewMapControl = new OverviewMap({
   ],
 });
 
-//FIXME: dynamic heigth for map
 @Component({
+  standalone: true,
   styleUrls: ['./map.component.css'],
   selector: 'app-map',
-  templateUrl: './map.component.html'
+  templateUrl: './map.component.html',
+  imports: [LegendeComponent, FontAwesomeModule, CommonModule, IndicatorDialogComponent]
 })
 export class MapComponent implements OnInit, AfterViewInit {
   private select = new Select();
   //FIXME: auf indicator class umschreiben
   @Input({ required: true }) selectedIndicator!: Indicator
+  @ViewChild(IndicatorDialogComponent) popUp: IndicatorDialogComponent | undefined;
   private selectedLayer: Map<Bounds, MapLayer> = new Map<Bounds, MapLayer>()
   private selectedYear: number = 2021
   private selectedBounds: Bounds = Bounds.Berlin
@@ -50,12 +58,14 @@ export class MapComponent implements OnInit, AfterViewInit {
   })
   popUpIsVisible: boolean = false
   popUpContent: string = ''
+  faChartLine = faChartLine
+  showIndicatorDialog = false
 
   constructor(private mapService: DataService) { }
 
   ngOnInit(): void {
     this.map = new OlMap({
-      controls: defaultControls().extend([overviewMapControl, new FullScreen()]),
+      controls: defaultControls().extend([overviewMapControl, new FullScreen]),
       view: new View({
         center: mapCenter,
         zoom: 10,
@@ -79,7 +89,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.selectedYear = year ?? this.selectedYear;
     this.selectedIndicator = indicator ?? this.selectedIndicator
 
-    this.mapService.getMapLayerForBounds(this.selectedIndicator!, this.selectedBounds, this.selectedYear).subscribe((layer) => {
+    this.mapService.getMapLayerForBounds(this.selectedIndicator, this.selectedBounds, this.selectedYear).subscribe((layer) => {
       const vector = layer.layer
       if (this.selectedLayer.has(this.selectedBounds)) {
         const tempLayer: MapLayer = this.selectedLayer.get(this.selectedBounds)!;
@@ -116,7 +126,9 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.highlightLayer(feature)
     const popup = new Overlay({ element: document.getElementById('popup')! })
     const extent = getCenter(feature.getGeometry()?.getExtent() as Extent)
-    this.popUpContent = `<div><b>Region:</b> ${feature.get('name')}</div><div><b>Wert:</b> ${feature.get('value')}</div>`
+    this.popUpContent = `
+      <div><b>Region:</b> ${feature.get('name')}</div>
+      <div><b>Wert:</b> ${feature.get('value')}</div>`
     popup.setPosition(extent)
     this.map.addOverlay(popup)
     this.popUpIsVisible = true
@@ -152,4 +164,10 @@ export class MapComponent implements OnInit, AfterViewInit {
       }))
     } catch (ignored) { }
   }
+
+  openIndicatorDialog() {
+    const dialogData: IndicatorDialogData = {title: this.selectedIndicator.title}
+    this.popUp?.openDialog(dialogData)
+  }
 }
+

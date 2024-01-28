@@ -27,12 +27,13 @@ export class TableComponent implements AfterViewInit, OnDestroy, OnInit {
   constructor(private dataService: DataService) { }
 
   ngOnInit(): void {
-    this.tableSource.sort = this.sort
-
-    const sortState: Sort = { active: 'name', direction: 'desc' };
-    this.sort.active = sortState.active;
-    this.sort.direction = sortState.direction;
-    this.sort.sortChange.emit(sortState);
+    if (this.sort) {
+      this.tableSource.sort = this.sort
+      const sortState: Sort = { active: 'name', direction: 'desc' };
+      this.sort.active = sortState.active;
+      this.sort.direction = sortState.direction;
+      this.sort.sortChange.emit(sortState);
+    }
   }
 
   sortByName(a: TableElem, b: TableElem) {
