@@ -52,6 +52,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   private selectedYear: number = 2021
   private selectedBounds: Bounds = Bounds.Berlin
   private map: OlMap = new OlMap
+  private selectedMapFeature: Feature<Geometry> | undefined
   private baseMap: TileLayer<any> = new TileLayer({
     className: 'bw',
     source: new OSM(),
@@ -80,7 +81,8 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.select.on('select', (e) => {
-      this.showPopUp(e.selected[0])
+      this.selectedMapFeature = e.selected[0]
+      this.showPopUp()
     })
   }
 
@@ -122,7 +124,8 @@ export class MapComponent implements OnInit, AfterViewInit {
     });
   }
 
-  showPopUp(feature: Feature<Geometry>) {
+  showPopUp() {
+    const feature = this.selectedMapFeature!
     this.highlightLayer(feature)
     const popup = new Overlay({ element: document.getElementById('popup')! })
     const extent = getCenter(feature.getGeometry()?.getExtent() as Extent)
@@ -166,7 +169,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   openIndicatorDialog() {
-    const dialogData: IndicatorDialogData = {title: this.selectedIndicator.title}
+    const dialogData: IndicatorDialogData = { indicator: this.selectedIndicator, feature: this.selectedMapFeature! }
     this.popUp?.openDialog(dialogData)
   }
 }

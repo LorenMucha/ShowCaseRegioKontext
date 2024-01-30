@@ -16,6 +16,7 @@ export class MapLayer implements MapLayer {
     bounds: Bounds
     colorMap: ColorRange
     valueRange: Array<number>
+
     //FIXME: refactor to Builder
     constructor(id?: number, layer?: VectorLayer<any>, name?: string, indicator?: IndicatorImpl, min?: number, max?: number, bounds?: Bounds, colorMap?: ColorRange, range?: Array<number>) {
         this.id = id!

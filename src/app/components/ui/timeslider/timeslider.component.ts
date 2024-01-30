@@ -11,6 +11,7 @@ export class TimesliderComponent implements OnInit, OnDestroy {
   min: number | undefined
   max: number | undefined
   @Output() yearEvent = new EventEmitter<number>();
+  
   private years: number[] = []
   private yearsStream$: BehaviorSubject<Set<number>> | undefined
   constructor(private dataService: DataService) { }
