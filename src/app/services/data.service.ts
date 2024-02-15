@@ -12,10 +12,13 @@ import { ZuZuege } from '../model/indicators/zuzuege'
 import { MapLayer } from '../model/map.layer'
 import { TableElem } from '../model/table-elem'
 import { VisualizeService } from './visualize.service'
+import Style from 'ol/style/Style'
+import Fill from 'ol/style/Fill'
+import Stroke from 'ol/style/Stroke'
 
 
 const DATA_SRC_BERLIN = 'assets/geojson/pgr_berlin_2021.json'
-const DATA_SRC_BRB = 'assets/geojson/gem_brb_2023.json'
+const DATA_SRC_BRB = 'assets/geojson/brb_krs.json'
 const MAP_COLORS = [[132, 22, 54], [173, 48, 67], [216, 76, 89], [233, 105, 90], [242, 138, 72], [250, 180, 0], [255, 217, 106], [204, 183, 154]];
 
 @Injectable({
@@ -55,9 +58,10 @@ export class DataService {
     const tableSource: TableElem[] = []
     this.selectedIndicator.next(indicator)
     this.selectedYear.next(year)
+    const indicatorData = this.getIndicatorData(indicator, year)
 
     if (bounds == Bounds.Berlin) {
-      return forkJoin([this.getLayerBerlin(), this.getIndicatorData(indicator, year)])
+      return forkJoin([this.getLayerBerlin(), indicatorData])
         .pipe(
           tap(([, data]) => {
             data.forEach((data) => {
@@ -74,6 +78,7 @@ export class DataService {
             features.forEach((feature) => {
               let value = 0
               const name = feature.get('PGR_NAME')
+              
               data
                 .filter((x) => name.includes(x.Name))
                 .forEach((y) => value += y[indicator.title])
@@ -100,13 +105,38 @@ export class DataService {
           this.visualService.styleMapLayer
         )
     } else {
-      return this.getLayerBrB().pipe(
-        mergeMap((layer) => {
-          const vectorLayer = new VectorLayer({ source: layer.getSource() })
-          this.mapLayerBrandenburg = new MapLayer(2, vectorLayer, 'Brandenburg', indicator, undefined, undefined, Bounds.Brandenburg)
-          return of(this.mapLayerBrandenburg)
-        })
-      )
+      return forkJoin([this.getLayerBrB(), indicatorData])
+        .pipe(
+          mergeMap(([layer, data]) => {
+
+            let vector = new VectorSource()
+            let source = layer.getSource()
+            let features = source.getFeatures() as Array<Feature>
+
+
+            features.forEach((feature) => {
+              data.forEach(data => {
+                let value = 0
+                const ags = feature.get('AGS')
+
+                if (Object.keys(data).some(key => key.includes(ags))){
+
+                  vector.addFeature(new Feature({
+                    value: value,
+                    geometry: feature.getGeometry(),
+                    name: feature.get("GEN"),
+                    id: feature.get('AGS'),
+                  }))
+                }
+              });
+            })
+
+            const vectorLayer = new VectorLayer({ source: vector })
+            const mapLayer = new MapLayer(2, vectorLayer, 'Brandenburg', indicator, undefined, undefined, Bounds.Brandenburg)
+            this.mapLayerBrandenburg = mapLayer
+            return of(this.mapLayerBrandenburg)
+          })
+        )
     }
   }
 
