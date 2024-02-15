@@ -40,7 +40,7 @@ export class LineChartComponent implements AfterViewInit {
 
         const svg = d3.select('#line-chart')
           .append('svg')
-          .attr('width', 400)
+          .attr('width', 700)
           .attr('height', 500);
         const xScale = d3.scaleTime()
           .domain(d3.extent(chartData, (d: ChartData): Date => d.date) as [Date, Date])

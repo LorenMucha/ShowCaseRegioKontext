@@ -78,7 +78,7 @@ export class DataService {
             features.forEach((feature) => {
               let value = 0
               const name = feature.get('PGR_NAME')
-              
+
               data
                 .filter((x) => name.includes(x.Name))
                 .forEach((y) => value += y[indicator.title])
@@ -112,30 +112,40 @@ export class DataService {
             let vector = new VectorSource()
             let source = layer.getSource()
             let features = source.getFeatures() as Array<Feature>
-
+            const values: number[] = []
 
             features.forEach((feature) => {
-              data.forEach(data => {
-                let value = 0
-                const ags = feature.get('AGS')
+              const ags = feature.get('AGS')
+              let exists = false
+              let value = 0
 
-                if (Object.keys(data).some(key => key.includes(ags))){
+              data.forEach(ob => {
+                const x = Object.keys(ob).filter(key => key.includes(ags))[0]
+                exists = x !== undefined
+                value += exists ? ob[x] : 0
+              })
 
-                  vector.addFeature(new Feature({
-                    value: value,
-                    geometry: feature.getGeometry(),
-                    name: feature.get("GEN"),
-                    id: feature.get('AGS'),
-                  }))
-                }
-              });
+              if (exists) {
+                vector.addFeature(new Feature({
+                  value: value,
+                  geometry: feature.getGeometry(),
+                  name: feature.get("GEN"),
+                  id: feature.get('AGS'),
+                }))
+                values.push(value)
+              }
             })
 
             const vectorLayer = new VectorLayer({ source: vector })
-            const mapLayer = new MapLayer(2, vectorLayer, 'Brandenburg', indicator, undefined, undefined, Bounds.Brandenburg)
+            const max = Math.max(...values)
+            const min = Math.min(...values)
+            const range = this.visualService.buildRanges(values)
+            const temperatureMap = colorRange(MAP_COLORS, range)
+            const mapLayer = new MapLayer(2, vectorLayer, 'Brandenburg', indicator, min, max, Bounds.Brandenburg, temperatureMap, range)
             this.mapLayerBrandenburg = mapLayer
             return of(this.mapLayerBrandenburg)
-          })
+          }),
+          this.visualService.styleMapLayer
         )
     }
   }

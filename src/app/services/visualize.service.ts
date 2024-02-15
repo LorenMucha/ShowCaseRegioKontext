@@ -44,8 +44,8 @@ export class VisualizeService {
   }
 
   public buildRanges(numbers: Array<number>): Array<number> {
-    const min = Math.min.apply(null, numbers);
-    const max = Math.max.apply(null, numbers);
+    const min = Math.min(...numbers);
+    const max = Math.max(...numbers);
     const spread = max - min;
     const step = spread / RANGES;
     const ranges = [];

@@ -125,16 +125,20 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   showPopUp() {
-    const feature = this.selectedMapFeature!
-    this.highlightLayer(feature)
-    const popup = new Overlay({ element: document.getElementById('popup')! })
-    const extent = getCenter(feature.getGeometry()?.getExtent() as Extent)
-    this.popUpContent = `
+    try {
+      const feature = this.selectedMapFeature!
+      this.highlightLayer(feature)
+      const popup = new Overlay({ element: document.getElementById('popup')! })
+      const extent = getCenter(feature.getGeometry()?.getExtent() as Extent)
+      this.popUpContent = `
       <div><b>Region:</b> ${feature.get('name')}</div>
       <div><b>Wert:</b> ${feature.get('value')}</div>`
-    popup.setPosition(extent)
-    this.map.addOverlay(popup)
-    this.popUpIsVisible = true
+      popup.setPosition(extent)
+      this.map.addOverlay(popup)
+      this.popUpIsVisible = true
+    } catch (ignored) {
+      this.popUpIsVisible = false
+    }
   }
 
   closePopUp() {
