@@ -38,17 +38,27 @@ export class LineChartComponent implements AfterViewInit {
         toArray()
       ).subscribe((chartData) => {
 
+        // set the dimensions and margins of the graph
+        var margin = { top: 10, right: 30, bottom: 30, left: 60 },
+          width = 850 - margin.left - margin.right,
+          height = 400 - margin.top - margin.bottom;
+
         const svg = d3.select('#line-chart')
-          .append('svg')
-          .attr('width', 700)
-          .attr('height', 500);
+          .append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")")
+
         const xScale = d3.scaleTime()
           .domain(d3.extent(chartData, (d: ChartData): Date => d.date) as [Date, Date])
-          .range([0, 400]);
+          .range([0, width])
+
 
         const yScale = d3.scaleLinear()
-          .domain([0, 100])
-          .range([300, 0]);
+          .domain([0, d3.max(chartData, (d: ChartData): number => +d.value) as number])
+          .range([height, 0]);
 
         const line = d3.line<any>()
           .x(d => xScale(d.date))
@@ -59,12 +69,15 @@ export class LineChartComponent implements AfterViewInit {
           .attr('fill', 'none')
           .attr('stroke', 'steelblue')
           .attr('stroke-width', 2)
-          .attr('d', line);
+          .attr('d', line)
+
         svg.append('g')
-          .attr('transform', `translate(0, ${300})`)
-          .call(d3.axisBottom(xScale));
+          .attr('transform', `translate(0, ${height})`)
+          .call(d3.axisBottom(xScale))
+
         svg.append('g')
-          .call(d3.axisLeft(yScale));
+          .call(d3.axisLeft(yScale))
+
       });
   }
 }
