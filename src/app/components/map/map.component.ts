@@ -124,6 +124,18 @@ export class MapComponent implements OnInit, AfterViewInit {
     });
   }
 
+  showLineChartForTableEvent(elem: TableElem): void {
+    this.selectedLayer.forEach((value: MapLayer, key: Bounds) => {
+      const vectorSource = value.layer.getSource()
+      const features = vectorSource.getFeatures() as Array<Feature>
+      const feature = features.filter((item) => elem.name.includes(item.get('name')))[0]
+      if (feature) {
+        const dialogData: IndicatorDialogData = { indicator: this.selectedIndicator, feature: feature}
+        this.popUp?.openDialog(dialogData)
+      }
+    });
+  }
+
   showPopUp() {
     try {
       const feature = this.selectedMapFeature!

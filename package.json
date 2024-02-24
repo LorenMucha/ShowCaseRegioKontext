@@ -4,10 +4,10 @@
   "scripts": {
     "ng": "ng",
     "dev": "ng serve",
-    "build": "ng build --configuration production --base-href 'https://lorenmucha.github.io/TestCaseRegioKontext/'",
+    "build": "ng build --configuration production --base-href 'https://lorenmucha.github.io/ShowCaseRegioKontext/'",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploy": "ng build --configuration production --base-href 'https://lorenmucha.github.io/TestCaseRegioKontext/' && touch .output/public/.nojekyll && gh-pages --dotfiles -d .output/public"
+    "deploy": "ng build --configuration production --base-href 'https://lorenmucha.github.io/ShowCaseRegioKontext/' && touch .output/public/.nojekyll && gh-pages --dotfiles -d .output/public"
   },
   "private": true,
   "dependencies": {

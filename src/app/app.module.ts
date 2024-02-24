@@ -22,29 +22,34 @@ import { DataService } from './services/data.service';
 import { TimesliderComponent } from './components/ui/timeslider/timeslider.component';
 import { MatSortModule } from '@angular/material/sort';
 import { MapComponent } from './components/map/map.component';
+import { LineChartComponent } from "./components/ui/line-chart/line-chart.component";
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
+
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    TapsComponent,
-    TableComponent,
-    TimesliderComponent,
-  ],
-  imports: [
-    MapComponent,
-    HttpClientModule,
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatSlideToggleModule,
-    MatSliderModule,
-    MatSortModule,
-    FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatTableModule, MatIconModule, MatCheckboxModule
-  ],
-  providers: [DataService, {
-    provide: 'mapId',
-    useValue: 'ol-map'
-  }],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        TapsComponent,
+        TableComponent,
+        TimesliderComponent,
+    ],
+    providers: [DataService, {
+            provide: 'mapId',
+            useValue: 'ol-map'
+        }],
+    bootstrap: [AppComponent],
+    imports: [
+        MapComponent,
+        FontAwesomeModule,
+        HttpClientModule,
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatSlideToggleModule,
+        MatSliderModule,
+        MatSortModule,
+        FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatTableModule, MatIconModule, MatCheckboxModule,
+        LineChartComponent
+    ]
 })
 export class AppModule { }

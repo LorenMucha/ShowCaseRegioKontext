@@ -1,10 +1,11 @@
-import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { BehaviorSubject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { TableElem } from 'src/app/model/table-elem';
 import { DataService } from 'src/app/services/data.service';
+import { faChartLine } from '@fortawesome/free-solid-svg-icons'
 
 
 @Component({
@@ -17,12 +18,16 @@ export class TableComponent implements AfterViewInit, OnDestroy, OnInit {
   tableSource = new MatTableDataSource<TableElem>()
   private tableSourceStream$: BehaviorSubject<TableElem[]> | undefined
   displayedColumns: string[] = ['id', 'name', 'value']
+
   @Output() tableHoverEvent = new EventEmitter<TableElem>()
   @Output() tableHoverResetEvent = new EventEmitter<TableElem>()
+  @Output() lineChartEvent = new EventEmitter<TableElem>()
 
   @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
     this.tableSource.sort = sort;
   }
+
+  faChartLine = faChartLine
 
   constructor(private dataService: DataService) { }
 
@@ -70,5 +75,9 @@ export class TableComponent implements AfterViewInit, OnDestroy, OnInit {
 
   resetHover(event: TableElem) {
     this.tableHoverResetEvent.emit(event)
+  }
+
+  showLineChart(event: TableElem) {
+    this.lineChartEvent.emit(event)
   }
 }

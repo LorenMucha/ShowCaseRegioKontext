@@ -29,7 +29,7 @@
                   class="ml-2">Brandenburg</span>
               </div>
             </div>
-            <app-table (tableHoverEvent)="highlightMapLayer($event)"
+            <app-table (lineChartEvent)="showLineChartPopUp($event)"  (tableHoverEvent)="highlightMapLayer($event)"
               (tableHoverResetEvent)="resetHighlightMapLayer($event)"></app-table>
           </div>
         </div>

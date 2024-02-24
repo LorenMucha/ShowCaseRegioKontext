@@ -53,4 +53,8 @@ export class AppComponent {
   resetHighlightMapLayer(elem: TableElem): void {
     this.map?.resetHighlightByTableElem(elem)
   }
+
+  showLineChartPopUp(elem: TableElem): void {
+    this.map?.showLineChartForTableEvent(elem)
+  }
 }
