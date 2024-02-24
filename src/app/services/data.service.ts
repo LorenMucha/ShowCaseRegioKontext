@@ -12,9 +12,6 @@ import { ZuZuege } from '../model/indicators/zuzuege'
 import { MapLayer } from '../model/map.layer'
 import { TableElem } from '../model/table-elem'
 import { VisualizeService } from './visualize.service'
-import Style from 'ol/style/Style'
-import Fill from 'ol/style/Fill'
-import Stroke from 'ol/style/Stroke'
 
 
 const DATA_SRC_BERLIN = 'assets/geojson/pgr_berlin_2021.json'

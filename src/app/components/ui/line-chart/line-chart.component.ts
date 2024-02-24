@@ -64,10 +64,23 @@ export class LineChartComponent implements AfterViewInit {
           .x(d => xScale(d.date))
           .y(d => yScale(d.value))
 
+        //area
+        const area = d3.area<any>()
+          .x(d => xScale(d.date))
+          .y0(height)
+          .y1(d => yScale(d.value))
+
+        svg.append("path")
+          .datum(chartData)
+          .attr("fill", "#69b3a2")
+          .attr("fill-opacity", .3)
+          .attr("stroke", "none")
+          .attr("d", area)
+
         svg.append('path')
           .datum(chartData)
           .attr('fill', 'none')
-          .attr('stroke', 'steelblue')
+          .attr('stroke', '#22543d')
           .attr('stroke-width', 2)
           .attr('d', line)
 
@@ -76,8 +89,18 @@ export class LineChartComponent implements AfterViewInit {
           .call(d3.axisBottom(xScale))
 
         svg.append('g')
-          .call(d3.axisLeft(yScale))
+          .call(d3.axisLeft(yScale).tickSizeOuter(0))
 
+        // Add the line
+        svg.selectAll("myCircles")
+          .data(chartData)
+          .enter()
+          .append("circle")
+          .attr("fill", "red")
+          .attr("stroke", "none")
+          .attr("cx", d => xScale(d.date))
+          .attr("cy", d => yScale(d.value))
+          .attr("r", 3)
       });
   }
 }

@@ -26,7 +26,7 @@
             <ng-container matColumnDef="value">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Wert</th>
                 <td mat-cell *matCellDef="let element" class="break-all"> {{element.value}}
-                    <fa-icon [icon]="faChartLine" class="pl-1" (click)="showLineChart(element)"></fa-icon>
+                    <fa-icon [icon]="faChartLine" class="pl-1 text-green-900" (click)="showLineChart(element)"></fa-icon>
                 </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns" class="sticky z-50 top-0 !bg-white"></tr>
