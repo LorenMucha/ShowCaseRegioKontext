@@ -23,6 +23,7 @@ import { LegendeComponent } from "../legende/legende.component";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { CommonModule } from '@angular/common'
 import { IndicatorDialogComponent, IndicatorDialogData } from '../ui/dialog/popup.component'
+import { pointerMove, click } from 'ol/events/condition.js';
 
 
 const berlinLonLat = [13.404954, 52.520008]
@@ -44,7 +45,7 @@ const overviewMapControl = new OverviewMap({
   imports: [LegendeComponent, FontAwesomeModule, CommonModule, IndicatorDialogComponent]
 })
 export class MapComponent implements OnInit, AfterViewInit {
-  private select = new Select();
+  private selectHover = new Select({ condition: pointerMove });
   //FIXME: auf indicator class umschreiben
   @Input({ required: true }) selectedIndicator!: Indicator
   @ViewChild(IndicatorDialogComponent) popUp: IndicatorDialogComponent | undefined;
@@ -76,13 +77,17 @@ export class MapComponent implements OnInit, AfterViewInit {
     })
 
     this.addMapLayer(this.selectedBounds, this.selectedYear)
-    this.map.addInteraction(this.select);
+    this.map.addInteraction(this.selectHover)
   }
 
   ngAfterViewInit(): void {
-    this.select.on('select', (e) => {
-      this.selectedMapFeature = e.selected[0]
-      this.showPopUp()
+
+    this.selectHover.on('select', (e) => {
+      const selected = e.selected[0]
+      if (selected) {
+        this.selectedMapFeature = e.selected[0]
+        this.showPopUp()
+      }
     })
   }
 
@@ -130,7 +135,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       const features = vectorSource.getFeatures() as Array<Feature>
       const feature = features.filter((item) => elem.name.includes(item.get('name')))[0]
       if (feature) {
-        const dialogData: IndicatorDialogData = { indicator: this.selectedIndicator, feature: feature}
+        const dialogData: IndicatorDialogData = { indicator: this.selectedIndicator, feature: feature }
         this.popUp?.openDialog(dialogData)
       }
     });
@@ -149,18 +154,17 @@ export class MapComponent implements OnInit, AfterViewInit {
       this.map.addOverlay(popup)
       this.popUpIsVisible = true
     } catch (ignored) {
-      this.popUpIsVisible = false
+      this.closePopUp()
     }
   }
 
   closePopUp() {
-    this.select.getFeatures().clear()
+    this.selectHover.getFeatures().clear()
     this.popUpIsVisible = false
   }
 
   resetHighlightByTableElem(elem: TableElem) {
     this.selectedLayer.forEach((value: MapLayer, key: Bounds) => {
-      //FIXME: diese Funktion kann seperiert werden
       const vectorSource = value.layer.getSource()
       const features = vectorSource.getFeatures() as Array<Feature>
       const feature = features.filter((item) => elem.name.includes(item.get('name')))[0]
@@ -174,6 +178,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
 
   private highlightLayer(feature: Feature<Geometry>): void {
     try {
